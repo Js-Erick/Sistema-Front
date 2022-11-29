@@ -67,7 +67,7 @@
                         </v-icon>
                     </template>
                     <template v-slot:no-data>
-                        <v-btn color="primary" @click="initialize">
+                        <v-btn color="primary">
                             Reset
                         </v-btn>
                     </template>
@@ -96,11 +96,10 @@
         fat: 0,
         carbs: 0,
         protein: 0,
-        id:'',
-        nombre:'',
-        descripcion:''
       },
-      
+      id:'',
+      nombre:'',
+      descripcion:''
      
     }),
 
@@ -163,21 +162,23 @@
         })
       },
       limpiar(){
-        this.id='';
-        this.nombre='';
-        this.descripcion='';
+      this.id='';
+      this.nombre='';
+      this.descripcion='';
       },
 
       guardar () {
         if (this.editedIndex > -1) {
           //guardar
         } else {
+          console.log(this.nombre)
+          console.log(this.descripcion)
           let me=this;
           axios.post('api/categorias/guardarCategoria',{
-            'nombre' : me.nombre,
-            'descripcion':me.descripcion,
-          }).then(function(response){
-            console.log(response);
+            'nombre' : this.nombre,
+            'descripcion':this.descripcion,
+          }).then(function(res){
+            console.log(res)
             me.close();
             me.listar();
             me.limpiar();
@@ -186,6 +187,26 @@
           });
         }       
       },
-    },
+      guardar1 () {
+        if (this.editedIndex > -1) {
+          //guardar
+        } else {
+          
+          let me={nombre:this.nombre,descripcion:this.descripcion}
+          console.log(me)
+          fetch('api/categorias/guardarCategoria',{
+            method:"POST",
+            body:JSON.stringify(me)
+          })
+          .then(res=>res.json())
+          .then((datosRes=>{
+            console.log(datosRes);
+            this.close();
+            this.listar();
+            this.limpiar();
+          }))   
+        }       
+      },
+   },
   }
 </script>
