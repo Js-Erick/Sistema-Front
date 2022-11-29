@@ -99,7 +99,9 @@
       },
       id:'',
       nombre:'',
-      descripcion:''
+      descripcion:'',
+      valida:0,
+      validaMensaje:[]
      
     }),
 
@@ -168,6 +170,9 @@
       },
 
       guardar () {
+         if(this.validar()){
+            return;
+         }
         if (this.editedIndex > -1) {
           //guardar
         } else {
@@ -187,13 +192,24 @@
           });
         }       
       },
+      validar(){
+        this.valida=0;
+        this.validaMensaje=[];
+        if (this.nombre.length<3 || this.nombre.lenght>50){
+            this.validaMensaje.push("El nombre debe tener mas de 3 caracteres y menos de 50 caracteres")
+        }
+        if (this.validaMensaje.length){
+           this.valida=1;
+        }
+        return this.valida;
+      },
+
       guardar1 () {
         if (this.editedIndex > -1) {
           //guardar
-        } else {
-          
+        } else {  
           let me={nombre:this.nombre,descripcion:this.descripcion}
-          console.log(me)
+          //console.log(me)
           fetch('api/categorias/guardarCategoria',{
             method:"POST",
             body:JSON.stringify(me)
@@ -201,9 +217,9 @@
           .then(res=>res.json())
           .then((datosRes=>{
             console.log(datosRes);
-            this.close();
-            this.listar();
-            this.limpiar();
+            //this.close();
+            //this.listar();
+            //this.limpiar();
           }))   
         }       
       },
