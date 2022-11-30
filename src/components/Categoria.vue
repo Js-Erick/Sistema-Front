@@ -1,9 +1,7 @@
 <template>
     <v-layout align-start>
         <v-flex>
-                <v-data-table :headers="headers" :items="categorias" :search="search"  class="elevation-1">
-                    <template v-slot:top>
-                        <v-toolbar flat>
+          <v-toolbar flat>
                             <v-toolbar-title>Categorias</v-toolbar-title>
                             <v-divider class="mx-4" inset vertical></v-divider>
                             <v-spacer></v-spacer>
@@ -23,12 +21,18 @@
                                     <v-card-text>
                                         <v-container>
                                             <v-row>
+                                                
                                                 <v-col cols="12" sm="12" md="12">
                                                     <v-text-field v-model="nombre" label="Nombre"></v-text-field>
                                                 </v-col>
                                                 <v-col cols="12" sm="12" md="12">
                                                     <v-text-field v-model="descripcion" label="Descripción"></v-text-field>
                                                 </v-col>
+                                                <v-col cols="12" sm="12" md="12" v-show="valida">
+                                                    <div class="red--text" v-for="v in validaMensaje" :key="v" v-text="v"></div>
+                                                </v-col>
+
+                                               
                                             </v-row>
                                         </v-container>
                                     </v-card-text>
@@ -55,23 +59,24 @@
                                     </v-card-actions>
                                 </v-card>
                             </v-dialog>
-                        </v-toolbar>
-                
-                    </template>
-                    <template v-slot:item.actions="{ item }">
-                        <v-icon small class="mr-2" @click="editItem(item)">
-                            edit
-                        </v-icon>
-                        <v-icon small @click="deleteItem(item)">
-                            delete
-                        </v-icon>
-                    </template>
-                    <template v-slot:no-data>
-                        <v-btn color="primary">
-                            Reset
-                        </v-btn>
-                    </template>
-                </v-data-table>
+          </v-toolbar>
+              <v-data-table :headers="headers" :items="categorias" :search="search"  class="elevation-1">
+                  <template v-slot:top>
+                  </template>
+                  <template v-slot:item.actions="{ item }">
+                      <v-icon small class="mr-2" @click="editItem(item)">
+                          edit
+                      </v-icon>
+                      <v-icon small @click="deleteItem(item)">
+                          delete
+                      </v-icon>
+                  </template>
+                  <template v-slot:no-data>
+                      <v-btn color="primary">
+                          Reset
+                      </v-btn>
+                  </template>
+              </v-data-table>
         </v-flex> 
     </v-layout>      
 </template>
@@ -83,6 +88,7 @@
       dialog: false,
       dialogDelete: false,
       headers: [
+        
         { text: 'Nombre', value: 'nombre' },
         { text: 'Descripcion', value: 'descripcion',sortable: false },
         { text: 'Estado', value: 'condicion',sortable: false },
@@ -90,16 +96,11 @@
       ],
       search:'',
       editedIndex: -1,
-      editedItem: {
-        name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0,
-      },
-      id:'',
+      
+      id:0,
       nombre:'',
       descripcion:'',
+      condicion:1,
       valida:0,
       validaMensaje:[]
      
@@ -136,9 +137,12 @@
       },
 
       editItem (item) {
-        this.editedIndex = this.desserts.indexOf(item)
-        this.editedItem = Object.assign({}, item)
+        this.id = item.id;
+        this.nombre = item.nombre;
+        this.descripcion = item.descripcion;
+        this.editedIndex = 1;
         this.dialog = true
+        
       },
 
       deleteItem (item) {
@@ -154,6 +158,7 @@
 
       close () {
         this.dialog = false
+        this.limpiar();
       },
 
       closeDelete () {
@@ -167,6 +172,7 @@
       this.id='';
       this.nombre='';
       this.descripcion='';
+      this.editedIndex = -1;
       },
 
       guardar () {
@@ -174,14 +180,33 @@
             return;
          }
         if (this.editedIndex > -1) {
-          //guardar
+          //Editar
+          let me=this;
+          //console.log(this.id)
+          axios.put('api/categorias/editarCategoria',{
+            'id': this.id,
+            'nombre' : this.nombre,
+            'descripcion':this.descripcion,
+            'condicion':this.condicion,
+             
+          }).then(function(res){
+            console.log(res)
+            me.close();
+            me.listar();
+            me.limpiar();
+          }).catch(function(error){
+              console.log(error);
+          });
         } else {
-          console.log(this.nombre)
-          console.log(this.descripcion)
+          //Guardar
+          //console.log(this.nombre)
+          //console.log(this.descripcion)
           let me=this;
           axios.post('api/categorias/guardarCategoria',{
             'nombre' : this.nombre,
             'descripcion':this.descripcion,
+            'condicion':this.condicion,
+            
           }).then(function(res){
             console.log(res)
             me.close();
@@ -195,34 +220,14 @@
       validar(){
         this.valida=0;
         this.validaMensaje=[];
-        if (this.nombre.length<3 || this.nombre.lenght>50){
-            this.validaMensaje.push("El nombre debe tener mas de 3 caracteres y menos de 50 caracteres")
+        if(this.nombre.length<3 || this.nombre.length >50){
+            this.validaMensaje.push("El nombre debe tener más de 3 caracteres y menos que 50")
         }
         if (this.validaMensaje.length){
-           this.valida=1;
+          this.valida=1;
         }
         return this.valida;
-      },
-
-      guardar1 () {
-        if (this.editedIndex > -1) {
-          //guardar
-        } else {  
-          let me={nombre:this.nombre,descripcion:this.descripcion}
-          //console.log(me)
-          fetch('api/categorias/guardarCategoria',{
-            method:"POST",
-            body:JSON.stringify(me)
-          })
-          .then(res=>res.json())
-          .then((datosRes=>{
-            console.log(datosRes);
-            //this.close();
-            //this.listar();
-            //this.limpiar();
-          }))   
-        }       
-      },
+    }  
    },
   }
 </script>
