@@ -91,10 +91,11 @@
                 categorias:[],                
                 dialog: false,
                 headers: [
-                    { text: 'Opciones', value: 'opciones', sortable: false },
+                    
                     { text: 'Nombre', value: 'nombre' },
                     { text: 'Descripción', value: 'descripcion', sortable: false  },
-                    { text: 'Estado', value: 'condicion', sortable: false  }                
+                    { text: 'Estado', value: 'condicion', sortable: false  },
+                    { text: 'Opciones', value: 'opciones', sortable: false },                
                 ],
                 search: '',
                 editedIndex: -1,
