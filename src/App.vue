@@ -1,12 +1,14 @@
 <template>
   <v-app>
-    <v-app-bar app class="primary">
+    <v-app-bar app class="info">
       <v-toolbar-title  style="width: 300px" class="ml-3 pl-2 ">
-        <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-        <span >Sistema</span>
+        <v-app-bar-nav-icon  @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+       
+        <span class="white--text">Sistema</span>
+       
       </v-toolbar-title>
     </v-app-bar> 
-   
+    
     <v-navigation-drawer
     :clipped="$vuetify.breakpoint.lgAndUp"
       v-model="drawer"
@@ -29,7 +31,7 @@
             <v-list-item slot="activator">
               <v-list-item-content>
                 <v-list-item-title>
-                  Almacén
+                  Bodega
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
@@ -43,13 +45,13 @@
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item :to="{ name: 'tabla1'}">
+            <v-list-item :to="{ name: 'articulos'}">
               <v-list-item-action>
                 <v-icon>table_chart</v-icon>
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>
-                  Aticulos
+                  Articulos
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
