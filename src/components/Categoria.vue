@@ -143,6 +143,7 @@
                 let me=this;
                 axios.get('api/Categorias/Listar').then(function(response){
                     //console.log(response);
+                    
                     me.categorias=response.data;
                 }).catch(function(error){
                     console.log(error);
