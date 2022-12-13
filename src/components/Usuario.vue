@@ -2,7 +2,7 @@
     <v-layout align-start>
         <v-flex>
           <v-toolbar flat>
-            <v-toolbar-title>Categorias</v-toolbar-title>
+            <v-toolbar-title>Usuarios</v-toolbar-title>
             <v-divider class="mx-4" inset vertical></v-divider>
             <v-spacer></v-spacer>
             <v-text-field class="text-xs-center" v-model="search" append-icon="search" label="Busqueda" single-line hide-details></v-text-field>
@@ -10,7 +10,7 @@
             <v-dialog v-model="dialog" max-width="500px">
                 <template v-slot:activator="{ on, attrs }">
                     <v-btn color="primary" dark class="mb-2" v-bind="attrs" v-on="on">
-                        Nueva Categoria
+                        Nuevo Usuario
                     </v-btn>
                 </template>
                 <v-card>
@@ -21,12 +21,30 @@
                     <v-card-text>
                         <v-container>
                             <v-row>
-                             
-                                <v-col cols="12" sm="12" md="12">
+                               <v-col cols="12" sm="6" md="6">
                                     <v-text-field v-model="nombre" label="Nombre"></v-text-field>
                                 </v-col>
-                                <v-col cols="12" sm="12" md="12">
-                                    <v-text-field v-model="descripcion" label="Descripción"></v-text-field>
+                                <v-col cols="12" sm="6" md="6">
+                                    <v-select v-model="idrol" :items="roles" label="Rol"></v-select>
+                                </v-col>
+                                <v-col cols="12" sm="6" md="6">
+                                    <v-select v-model="tipoDocumento" :items="documentos" label="Tipo Documento"></v-select>
+                                </v-col>
+                                
+                                <v-col cols="12" sm="6" md="6">
+                                    <v-text-field  v-model="numDocumento" label="Numero Documento"></v-text-field>
+                                </v-col>
+                                <v-col cols="12" sm="6" md="6">
+                                    <v-text-field  v-model="direccion" label="Direccion"></v-text-field>
+                                </v-col>
+                                <v-col cols="12" sm="6" md="6">
+                                    <v-text-field v-model="email" label="Email"></v-text-field>
+                                </v-col>
+                                <v-col cols="12" sm="6" md="6">
+                                    <v-text-field v-model="telefono" label="Telefono"></v-text-field>
+                                </v-col>
+                                <v-col cols="12" sm="6" md="6">
+                                    <v-text-field type="password" v-model="password" label="Password"></v-text-field>
                                 </v-col>
                                 <v-col cols="12" sm="12" md="12" v-show="valida">
                                     <div class="red--text" v-for="v in validaMensaje" :key="v" v-text="v"></div>
@@ -64,7 +82,7 @@
                 </v-card>
             </v-dialog>
           </v-toolbar>
-              <v-data-table :headers="headers" :items="categorias" :search="search"  class="elevation-1">
+              <v-data-table :headers="headers" :items="usuarios" :search="search"  class="elevation-1">
                   <template v-slot:top>
                   </template>
                   <template v-slot:item.condicion="{item}">
@@ -76,16 +94,16 @@
                     </template>
                   </template>
                   <template v-slot:item.actions="{ item }">
-                          <v-icon small color="green" class="mr-2" @click="editItem(item)">
+                          <v-icon small class="mr-2" @click="editItem(item)">
                               edit
                           </v-icon>
                           <template v-if="item.condicion">
-                          <v-icon small color="red" class="mr-2" @click="activarDesactivarMostrar(2,item)">
+                          <v-icon small @click="activarDesactivarMostrar(2,item)">
                               block
                           </v-icon>
                         </template>
                       <template v-else>
-                          <v-icon small color="blue" class="mr-2" @click="activarDesactivarMostrar(1,item)">
+                          <v-icon small @click="activarDesactivarMostrar(1,item)">
                               check
                           </v-icon>
                         </template>
@@ -103,33 +121,49 @@
   import axios from 'axios';
   export default {
     data: () => ({
-      categorias:[],
+      usuarios:[],
       dialog: false,
       adModal:0,
       adAccion:0,
       adNombre:'',
       adId:'',
       dialogDelete: false,
+      valida:0,
+      validaMensaje:[],
+      search:'',
+      editedIndex: -1,
       headers: [
         { text: 'Nombre', value: 'nombre' },
-        { text: 'Descripcion', value: 'descripcion',sortable: false },
+        { text: 'Rol', value: 'idrolNavigation.nombre'},
+        { text: 'Tipo Documento', value: 'tipoDocumento'},
+        { text: 'Numero Documento', value: 'numDocumento',sortable:false},
+        { text: 'Dirección', value: 'direccion',sortable:false },
+        { text: 'Teléfono', value: 'telefono',sortable: false },
+        { text: 'Email', value: 'email',sortable: false },
         { text: 'Estado', value: 'condicion',sortable: false },
         { text: 'Opciones', value: 'actions', sortable: false },
       ],
-      search:'',
-      editedIndex: -1,
-      
+
       id:0,
       nombre:null,
       descripcion:null,
       condicion:true,
-      valida:0,
-      validaMensaje:[],
+      idrol:0,
+      roles:[],
+      documentos:['DNI','CEDULA','PASAPORTE'],
+      tipoDocumento:null,
+      numDocumento:null,
+      direccion:null,
+      telefono:null,
+      email:null,
+      password:null,
+      act_Password:false,
+      passwordAnt:null
     }),
 
     computed: {
       formTitle () {
-        return this.editedIndex === -1 ? 'Nueva Categoria' : 'Editar Categoria'
+        return this.editedIndex === -1 ? 'Nuevo Usuario' : 'Editar Usuario'
       },
     },
 
@@ -144,22 +178,36 @@
 
     created () {
       this.listar();
+      this.select();
     },
 
-    methods: {
-      listar(){
-                let me=this;
-                axios.get('api/Categorias/Listar').then(function(response){
-                    //console.log(response);
-                    
-                    me.categorias=response.data;
-                }).catch(function(error){
-                    console.log(error);
-                });
+        methods: {
+          listar() {
+            let me = this;
+            axios.get('api/Usuarios/Listar').then(function (response) {
+              //console.log(response);
+              me.usuarios = response.data;
+            }).catch(function (error) {
+              console.log(error);
+            });
             },
+        select() {
+          let me = this;
+          let rolesArray = []
+          axios.get('api/Roles/Select').then(function (response) {
+            //console.log(response);
+            rolesArray = response.data,
+              rolesArray.map(function (x) {
+                me.roles.push({ text: x.nombre, value: x.idrol })
+              });
+          }).catch(function (error) {
+            console.log(error);
+          });
+        },      
+
       listar1(){
         let me=this;
-        axios.get('api/Categorias/Listar').then(function(response){
+        axios.get('api/Articulos/Listar').then(function(response){
 
        for (var x = 0; x < response.data.length; x++) {
 
@@ -183,24 +231,20 @@
       },
      
       editItem (item) {
-        this.id = item.idcategoria;
-        console.log(this.id); 
-        this.nombre = item.nombre;
-        this.descripcion = item.descripcion;
+        //console.log(this.id); 
+        this.id = item.idusuario;
+        this.idrol=item.idrol;
+        this.nombre=item.nombre;
+        this.tipoDocumento=item.tipoDocumento;
+        this.numDocumento=item.numDocumento;
+        this.direccion = item.direccion;
+        this.telefono = item.telefono;
+        this.email = item.email;
+        this.password = item.passwordHash;
+        this.passwordAnt =item.passwordHash
         this.editedIndex = 1;
         this.dialog = true
         
-      },
-
-      deleteItem (item) {
-        this.editedIndex = this.desserts.indexOf(item)
-        this.editedItem = Object.assign({}, item)
-        this.dialogDelete = true
-      },
-
-      deleteItemConfirm () {
-        this.desserts.splice(this.editedIndex, 1)
-        this.closeDelete()
       },
 
       close () {
@@ -218,7 +262,14 @@
       limpiar(){
       this.id='';
       this.nombre='';
-      this.descripcion='';
+      this.tipoDocumento='';
+      this.numDocumento='';
+      this.direccion= '';
+      this.telefono='';
+      this.email='';
+      this.password='';
+      this.passwordAnt='';
+      this.act_Password=false
       this.editedIndex = -1;
       },
 
@@ -229,12 +280,21 @@
         if (this.editedIndex > -1) {
           //Editar
           let me=this;
-          console.log(this.id)
-          axios.put('api/Categorias/Actualizar',{
-            'idcategoria': me.id,
+          if(me.password!=me.passwordAnt){
+            me.act_Password=true
+          }
+          //console.log(this.id)
+          axios.put('api/Usuarios/Actualizar',{
+            'idusuario': me.id,
+            'idrol': me.idrol,
             'nombre': me.nombre,
-            'descripcion': me.descripcion,
-            'condicion': me.condicion,
+            'tipoDocumento':me.tipoDocumento,
+            'numDocumento': me.numDocumento,
+            'direccion': me.direccion,
+            'telefono': me.telefono,
+            'email': me.email,
+            'password' : me.password,
+            'act_password': me.act_Password
              
           }).then(function(res){
             console.log(res)
@@ -249,10 +309,15 @@
           //console.log(this.nombre)
           //console.log(this.descripcion)
           let me=this;
-          axios.post('api/Categorias/Crear',{
-            'nombre' : me.nombre,
-            'descripcion':me.descripcion,
-            'condicion':me.condicion,
+          axios.post('api/Usuarios/Crear',{
+            'idrol': me.idrol,
+            'nombre': me.nombre,
+            'tipoDocumento':me.tipoDocumento,
+            'numDocumento': me.numDocumento,
+            'direccion': me.direccion,
+            'telefono': me.telefono,
+            'email': me.email,
+            'password' : me.password
             
           }).then(function(res){
             console.log(res)
@@ -268,8 +333,21 @@
       validar(){
         this.valida=0;
         this.validaMensaje=[];
-        if(this.nombre.length<3 || this.nombre.length >50){
-            this.validaMensaje.push("El nombre debe tener más de 3 caracteres y menos que 50")
+        if(this.nombre.length<3 || this.nombre.length >100){
+            this.validaMensaje.push("El nombre debe tener más de 3 caracteres y menos que 100.")
+        }
+        if(!this.idrol){
+            this.validaMensaje.push("Selecione un rol.")
+        }
+        if(!this.tipoDocumento){
+            this.validaMensaje.push("Selecione un tipo de documento.")
+        }
+        
+        if(!this.email){
+            this.validaMensaje.push("Ingresar mail del usuario.")
+        }
+        if(!this.password){
+            this.validaMensaje.push("Ingresar password del usuario.")
         }
         if (this.validaMensaje.length){
           this.valida=1;
@@ -278,7 +356,7 @@
       },
       activar(){
           let me=this;
-          axios.put('api/Categorias/Activar/'+this.adId,{}).then(function(response){
+          axios.put('api/Articulos/Activar/'+this.adId,{}).then(function(response){
               me.adModal=0;
               me.adAccion=0;
               me.adNombre="";
@@ -290,7 +368,7 @@
         },
       desactivar(){
         let me=this;
-          axios.put('api/Categorias/Desactivar/'+this.adId,{}).then(function(response){
+          axios.put('api/Articulos/Desactivar/'+this.adId,{}).then(function(response){
               me.adModal=0;
               me.adAccion=0;
               me.adNombre="";
@@ -303,7 +381,7 @@
       activarDesactivarMostrar(accion,item){
         this.adModal=1;
         this.adNombre=item.nombre;
-        this.adId=item.idcategoria;
+        this.adId=item.idarticulo;
         if(accion==1){
           
         this.adAccion=1;

@@ -4,7 +4,7 @@ import HomeView from '../views/HomeView.vue'
 import Categoria from '../components/Categoria.vue'
 import Articulo from '../components/Articulo.vue'
 import Rol from '../components/Rol.vue'
-
+import Usuario from '../components/Usuario.vue'
 
 Vue.use(VueRouter)
 
@@ -29,7 +29,11 @@ const routes = [
     name: 'roles',
     component: Rol
   },
- 
+  {
+    path: '/usuarios',
+    name: 'usuarios',
+    component: Usuario
+  },
 
 ]
 

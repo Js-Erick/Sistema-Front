@@ -11,6 +11,14 @@
               <v-data-table :headers="headers" :items="roles" :search="search"  class="elevation-1">
                 <template v-slot:top>
                   </template>
+                  <template v-slot:item.condicion="{item}">
+                      <template v-if="item.condicion">
+                        <span class="blue--text">Activo</span>
+                      </template>
+                      <template v-else>
+                      <span class="red--text">Inactivo</span>
+                    </template>
+                  </template>
                   
                   <template v-slot:no-data>
                       <v-btn color="primary" @click="listar">
