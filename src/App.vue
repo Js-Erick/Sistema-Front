@@ -3,10 +3,15 @@
     <v-app-bar app class="info">
       <v-toolbar-title  style="width: 300px" class="ml-3 pl-2 ">
         <v-app-bar-nav-icon  @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-       
         <span class="white--text">Sistema</span>
-       
       </v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-btn @click="salir" v-if="logueado" icon>
+        Salir<v-icon>logout</v-icon>
+      </v-btn>
+      <v-btn :to="{path:'/login'}" v-else icon>
+        <v-icon>apps</v-icon> Login
+      </v-btn>
     </v-app-bar> 
     
     <v-navigation-drawer
@@ -15,9 +20,10 @@
       temporary
       app
       dense
+      v-if="logueado"
     >
       <v-list>
-        <template>
+        <template v-if="esAdministrador || esBodeguero || esVendedor">
           <v-list-item :to="{ name: 'home'}">
             <v-list-item-action>
               <v-icon>home</v-icon>
@@ -27,7 +33,7 @@
             </v-list-item-title>
           </v-list-item>          
         </template>
-        <template>
+        <template v-if="esAdministrador || esBodeguero">
             <v-list-group>
             <v-list-item slot="activator">
               <v-list-item-content>
@@ -58,7 +64,7 @@
             </v-list-item>
           </v-list-group>
         </template>
-        <template>
+        <template v-if="esAdministrador || esBodeguero">
             <v-list-group>
             <v-list-item slot="activator">
               <v-list-item-content>
@@ -89,7 +95,7 @@
             </v-list-item>
           </v-list-group>
         </template>
-        <template>
+        <template v-if="esAdministrador || esVendedor">
             <v-list-group>
             <v-list-item slot="activator">
               <v-list-item-content>
@@ -120,7 +126,7 @@
             </v-list-item>
           </v-list-group>
         </template>
-        <template>
+        <template v-if="esAdministrador">
             <v-list-group>
             <v-list-item slot="activator">
               <v-list-item-content>
@@ -151,7 +157,7 @@
             </v-list-item>
           </v-list-group>
         </template>
-        <template>
+        <template v-if="esAdministrador">
             <v-list-group>
             <v-list-item slot="activator">
               <v-list-item-content>
@@ -214,6 +220,28 @@ export default {
   data () {
     return {
       drawer:true,
+    }
+  },
+  computed: {
+    logueado(){
+      return this.$store.state.usuario;
+    },
+    esAdministrador(){
+      return this.$store.state.usuario && this.$store.state.usuario.rol =='Administrador';
+    },
+    esBodeguero(){
+      return this.$store.state.usuario && this.$store.state.usuario.rol =='Bodeguero';
+    },
+    esVendedor(){
+      return this.$store.state.usuario && this.$store.state.usuario.rol =='Vendedor';
+    }
+  },
+  created(){
+    this.$store.dispatch("autoLogin");
+  },
+  methods:{
+    salir(){
+      this.$store.dispatch("salir");
     }
   }
 }
