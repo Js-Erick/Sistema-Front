@@ -149,7 +149,9 @@
     methods: {
       listar(){
                 let me=this;
-                axios.get('api/Categorias/Listar').then(function(response){
+                let header={"Authorization" : "Bearer " + this.$store.state.token};
+                let configuration = {headers : header};
+                axios.get('api/Categorias/Listar', configuration).then(function(response){
                     //console.log(response);
                     
                     me.categorias=response.data;
