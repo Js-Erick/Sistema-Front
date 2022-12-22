@@ -26,8 +26,8 @@
                     </v-text-field>
                     <template>
                       <v-data-table :headers="cabeceraArticulos" :items="articulos" class="elevation-1">
-                        <template v-slot:item.seleccionar="{ detalles,item }">
-                          <v-icon small class="mr-2" @click="agregarDetalle(detalles, item)">
+                        <template v-slot:item.seleccionar="{item}">
+                          <v-icon small class="mr-2" @click="agregarDetalle(item)">
                             add
                           </v-icon>
                         </template>
@@ -171,10 +171,10 @@
             <div class="red--text" v-for="v in validaMensaje" :key="v" v-text="v"></div>
           </v-flex>
           <v-flex xs12 sm12 md12 xl12>
-            <v-btn @click="ocultarNuevo" color="blue darken-1" text>
+            <v-btn @click="ocultarNuevo()" color="blue darken-1" text>
               Cancelar
             </v-btn>
-            <v-btn color="success" text>
+            <v-btn @click="guardar()" color="success" text>
               Guardar
             </v-btn>
           </v-flex>
@@ -197,7 +197,6 @@ export default {
     valida: 0,
     validaMensaje: [],
     search: '',
-    editedIndex: -1,
     verNuevo: 0,
     errorArticulo: null,
 
@@ -281,6 +280,7 @@ export default {
 
     ocultarNuevo() {
       this.verNuevo = 0;
+      this.limpiar();
     },
 
     buscarCodigo() {
@@ -339,7 +339,6 @@ export default {
       return sw;
     },
 
-
     listar() {
       let me = this;
       axios.get('api/Ingresos/Listar').then(function (response) {
@@ -363,96 +362,40 @@ export default {
       });
     },
 
-    listar1() {
-      let me = this;
-      axios.get('api/Articulos/Listar').then(function (response) {
-
-        for (var x = 0; x < response.data.length; x++) {
-
-          var estado = ''
-          if (response.data[x].condicion == true) {
-            estado = 'Activo'
-          } else {
-            estado = 'Inactivo'
-          }
-          //console.log(estado)
-          response.data[x].condicion = estado
-          // for (response.data.length() )
-          // console.log(response.data[x].condicion); //response
-          me.categorias = response.data;
-
-        }
-
-      }).catch(function (error) {
-        console.log(error)
-      });
-    },
-
-    editItem(item) {
-      //console.log(this.id); 
-      this.id = item.idusuario;
-      this.idrol = item.idrol;
-      this.nombre = item.nombre;
-      this.tipoDocumento = item.tipoDocumento;
-      this.numDocumento = item.numDocumento;
-      this.direccion = item.direccion;
-      this.telefono = item.telefono;
-      this.email = item.email;
-      this.password = item.passwordHash;
-      this.passwordAnt = item.passwordHash;
-      this.editedIndex = 1;
-      this.dialog = true
-
-    },
 
     close() {
       this.dialog = false
       this.limpiar();
     },
 
-    closeDelete() {
-      this.dialogDelete = false
-      this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem)
-        this.editedIndex = -1
-      })
-    },
     limpiar() {
-      this.id = '';
-      this.nombre = '';
-      this.tipoDocumento = '';
-      this.numDocumento = '';
-      this.direccion = '';
-      this.telefono = '';
-      this.email = '';
-      this.password = '';
-      this.passwordAnt = '';
-      this.act_Password = false
-      this.editedIndex = -1;
+      this.id="";
+      this.idproveedor="";
+      this.tipoComprobante="";
+      this.serieComprobante="";
+      this.numComprobante="";
+      this.impuesto="18";
+      this.codigo="";
+      this.detalles=[];
+      this.total=0;
+      this.totalImpuesto=0;
+      this.totalParcial=0;
     },
 
     guardar() {
       if (this.validar()) {
         return;
       }
-      if (this.editedIndex > -1) {
-        //Editar
         let me = this;
-        if (me.password != me.passwordAnt) {
-          me.act_Password = true
-        }
-        console.log(this.id)
-        axios.put('api/Usuarios/Actualizar', {
-          'idusuario': me.id,
-          'idrol': me.idrol,
-          'nombre': me.nombre,
-          'tipoDocumento': me.tipoDocumento,
-          'numDocumento': me.numDocumento,
-          'direccion': me.direccion,
-          'telefono': me.telefono,
-          'email': me.email,
-          'password': me.password,
-          'act_password': me.act_Password
+        axios.post('api/Ingresos/Crear', {
+          'idproveedor':me.idproveedor,
+          'idusuario':me.$store.state.usuario.idusuario,
+          'tipoComprobante': me.tipoComprobante,
+          'serieComprobante': me.serieComprobante,
+          'numComprobante':me.numComprobante,
+          'impuesto': me.impuesto,
+          'total':me.total,
+          'detalles':me.detalles
 
         }).then(function (res) {
           console.log(res)
@@ -462,53 +405,28 @@ export default {
         }).catch(function (error) {
           console.log(error);
         });
-      } else {
-        //Guardar
-        //console.log(this.nombre)
-        //console.log(this.descripcion)
-        let me = this;
-        axios.post('api/Usuarios/Crear', {
-          'idrol': me.idrol,
-          'nombre': me.nombre,
-          'tipoDocumento': me.tipoDocumento,
-          'numDocumento': me.numDocumento,
-          'direccion': me.direccion,
-          'telefono': me.telefono,
-          'email': me.email,
-          'password': me.password
-
-        }).then(function (res) {
-          console.log(res)
-          me.close();
-          me.listar();
-          me.limpiar();
-        }).catch(function (error) {
-          console.log(error);
-        });
-      }
     },
 
     validar() {
       this.valida = 0;
       this.validaMensaje = [];
-      if (this.nombre.length < 3 || this.nombre.length > 100) {
-        this.validaMensaje.push("El nombre debe tener más de 3 caracteres y menos que 100.")
+      if (!this.idproveedor){
+          this.validaMensaje.push("Seleccione un proveedor.");
       }
-      if (!this.idrol) {
-        this.validaMensaje.push("Selecione un rol.")
+      if (!this.tipoComprobante){
+          this.validaMensaje.push("Seleccione un tipo de comprobante.");
       }
-      if (!this.tipoDocumento) {
-        this.validaMensaje.push("Selecione un tipo de documento.")
+      if (!this.numComprobante){
+          this.validaMensaje.push("Ingrese el número del comprobante.");
       }
-
-      if (!this.email) {
-        this.validaMensaje.push("Ingresar mail del usuario.")
+      if (!this.impuesto || this.impuesto<0){
+          this.validaMensaje.push("Ingrese un impuesto válido.");
       }
-      if (!this.password) {
-        this.validaMensaje.push("Ingresar password del usuario.")
+      if (this.detalles.length<=0){
+          this.validaMensaje.push("Ingrese al menos un artículo al detalle.");
       }
-      if (this.validaMensaje.length) {
-        this.valida = 1;
+      if (this.validaMensaje.length){
+          this.valida=1;
       }
       return this.valida;
     },
@@ -555,7 +473,6 @@ export default {
     activarDesactivarCerrar() {
       this.adModal = 0;
     }
-
   },
 }
 </script>
