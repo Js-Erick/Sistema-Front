@@ -26,13 +26,13 @@
                     </v-text-field>
                     <template>
                       <v-data-table :headers="cabeceraArticulos" :items="articulos" class="elevation-1">
-                        <template v-slot:item.seleccionar="{item}">
+                        <template v-slot:item.seleccionar="{ item }">
                           <v-icon small class="mr-2" @click="agregarDetalle(item)">
                             add
                           </v-icon>
                         </template>
                         <template slot="items" slot-scope="props">
-                         
+
                           <td>{{ item.nombre }}</td>
                           <td>{{ item.idcategoriaNavigation.nombre }}</td>
                           <td>{{ item.descripcion }}</td>
@@ -59,18 +59,18 @@
         <v-dialog v-model="adModal" max-width="500px">
           <v-card>
             <v-card-title class="text-h5" v-if="adAccion == 1">¿Activar Item?</v-card-title>
-            <v-card-title class="text-h5" v-if="adAccion == 2">¿Desactivar Item?</v-card-title>
+            <v-card-title class="text-h5" v-if="adAccion == 2">¿Anular Ingreso?</v-card-title>
             <v-card-text>
               Estás a punto de
               <span v-if="(adAccion == 1)">Activar</span>
-              <span v-if="(adAccion == 2)">Desactivar</span>
+              <span v-if="(adAccion == 2)">Anular</span>
               el ítem {{ adNombre }}
             </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn color="blue darken-1" text @click="activarDesactivarCerrar">Cancelar</v-btn>
               <v-btn v-if="(adAccion == 1)" color="red darken-1" text @click="activar">Activar</v-btn>
-              <v-btn v-if="(adAccion == 2)" color="red darken-1" text @click="desactivar">Desactivar</v-btn>
+              <v-btn v-if="(adAccion == 2)" color="red darken-1" text @click="desactivar">Anular</v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -79,28 +79,25 @@
       <v-data-table :headers="headers" :items="ingresos" :search="search" class="elevation-1" v-if="verNuevo == 0">
         <template v-slot:top>
         </template>
-        <template v-slot:item.estado="{ item }">
-          <template v-if="item.estado">
-            <span class="blue--text">Aceptado</span>
-          </template>
-          <template v-else>
-            <span class="red--text">{{ item.estado }}</span>
+        <template v-slot:item.estado="{item}">
+            <template v-if="item.estado ==='Aceptado'">
+               <span class="blue--text">Aceptado</span>
+            </template>
+            <template v-else>
+                <span class="red--text">Inactivo</span>
           </template>
         </template>
+    
         <template v-slot:item.actions="{ item }">
-          <v-icon small class="mr-2" @click="editItem(item)">
-            edit
+          <v-icon small class="mr-2" @click="verDetalles(item)">
+              tab
           </v-icon>
           <template v-if="item.estado == 'Aceptado'">
             <v-icon small @click="activarDesactivarMostrar(2, item)">
               block
             </v-icon>
           </template>
-          <template v-else>
-            <v-icon small @click="activarDesactivarMostrar(1, item)">
-              check
-            </v-icon>
-          </template>
+    
         </template>
         <template v-slot:no-data>
           <v-btn color="primary" @click="listar">
@@ -171,10 +168,11 @@
             <div class="red--text" v-for="v in validaMensaje" :key="v" v-text="v"></div>
           </v-flex>
           <v-flex xs12 sm12 md12 xl12>
-            <v-btn @click="ocultarNuevo()" color="blue darken-1" text>
+            <v-btn @click="ocultarNuevo()" color="orange darken-2" text>
               Cancelar
             </v-btn>
-            <v-btn @click="guardar()" color="success" text>
+
+            <v-btn v-if="verDet==0" @click="guardar()" color="success">
               Guardar
             </v-btn>
           </v-flex>
@@ -245,6 +243,7 @@ export default {
     totalImpuesto: 0,
     total: 0,
     verArticulos: 0,
+    verDet: 0,
 
   }),
 
@@ -302,6 +301,27 @@ export default {
       }).catch(function (error) {
         console.log(error);
       });
+    },
+    listarDetalles(id) {
+      let me = this;
+      axios.get('api/Ingresos/ListarDetalles/' + id).then(function (response) {
+        //console.log(response);
+        me.detalles = response.data;
+      }).catch(function (error) {
+        console.log(error);
+      });
+    },
+
+    verDetalles(item) {
+      this.limpiar();
+      this.tipoComprobante = item.tipoComprobante;
+      this.serieComprobante = item.serieComprobante;
+      this.numComprobante = item.numComprobante;
+      this.idproveedor = item.idproveedor;
+      this.impuesto = item.impuesto;
+      this.listarDetalles(item.idingreso);
+      this.verNuevo = 1;
+      this.verDet = 1;
     },
 
     mostrarArticulos() {
@@ -369,68 +389,69 @@ export default {
     },
 
     limpiar() {
-      this.id="";
-      this.idproveedor="";
-      this.tipoComprobante="";
-      this.serieComprobante="";
-      this.numComprobante="";
-      this.impuesto="18";
-      this.codigo="";
-      this.detalles=[];
-      this.total=0;
-      this.totalImpuesto=0;
-      this.totalParcial=0;
+      this.id = "";
+      this.idproveedor = "";
+      this.tipoComprobante = "";
+      this.serieComprobante = "";
+      this.numComprobante = "";
+      this.impuesto = "18";
+      this.codigo = "";
+      this.detalles = [];
+      this.total = 0;
+      this.totalImpuesto = 0;
+      this.totalParcial = 0;
+      this.verDet = 0;
     },
 
     guardar() {
       if (this.validar()) {
         return;
       }
-        let me = this;
-        axios.post('api/Ingresos/Crear', {
-          'idproveedor':me.idproveedor,
-          'idusuario':me.$store.state.usuario.idusuario,
-          'tipoComprobante': me.tipoComprobante,
-          'serieComprobante': me.serieComprobante,
-          'numComprobante':me.numComprobante,
-          'impuesto': me.impuesto,
-          'total':me.total,
-          'detalles':me.detalles
+      let me = this;
+      axios.post('api/Ingresos/Crear', {
+        'idproveedor': me.idproveedor,
+        'idusuario': me.$store.state.usuario.idusuario,
+        'tipoComprobante': me.tipoComprobante,
+        'serieComprobante': me.serieComprobante,
+        'numComprobante': me.numComprobante,
+        'impuesto': me.impuesto,
+        'total': me.total,
+        'detalles': me.detalles
 
-        }).then(function (res) {
-          console.log(res)
-          me.close();
-          me.listar();
-          me.limpiar();
-        }).catch(function (error) {
-          console.log(error);
-        });
+      }).then(function (res) {
+        console.log(res)
+        me.close();
+        me.listar();
+        me.limpiar();
+      }).catch(function (error) {
+        console.log(error);
+      });
     },
 
     validar() {
       this.valida = 0;
       this.validaMensaje = [];
-      if (!this.idproveedor){
-          this.validaMensaje.push("Seleccione un proveedor.");
+      if (!this.idproveedor) {
+        this.validaMensaje.push("Seleccione un proveedor.");
       }
-      if (!this.tipoComprobante){
-          this.validaMensaje.push("Seleccione un tipo de comprobante.");
+      if (!this.tipoComprobante) {
+        this.validaMensaje.push("Seleccione un tipo de comprobante.");
       }
-      if (!this.numComprobante){
-          this.validaMensaje.push("Ingrese el número del comprobante.");
+      if (!this.numComprobante) {
+        this.validaMensaje.push("Ingrese el número del comprobante.");
       }
-      if (!this.impuesto || this.impuesto<0){
-          this.validaMensaje.push("Ingrese un impuesto válido.");
+      if (!this.impuesto || this.impuesto < 0) {
+        this.validaMensaje.push("Ingrese un impuesto válido.");
       }
-      if (this.detalles.length<=0){
-          this.validaMensaje.push("Ingrese al menos un artículo al detalle.");
+      if (this.detalles.length <= 0) {
+        this.validaMensaje.push("Ingrese al menos un artículo al detalle.");
       }
-      if (this.validaMensaje.length){
-          this.valida=1;
+      if (this.validaMensaje.length) {
+        this.valida = 1;
       }
       return this.valida;
     },
-    activar() {
+    /*activar() {
       let me = this;
       axios.put('api/Usuarios/Activar/' + this.adId, {}).then(function (response) {
         me.adModal = 0;
@@ -441,23 +462,24 @@ export default {
       }).catch(function (error) {
         console.log(error);
       });
-    },
-    desactivar() {
-      let me = this;
-      axios.put('api/Usuarios/Desactivar/' + this.adId, {}).then(function (response) {
-        me.adModal = 0;
-        me.adAccion = 0;
-        me.adNombre = "";
-        me.adId = "";
-        me.listar();
-      }).catch(function (error) {
-        console.log(error);
+    },*/
+    
+    desactivar(){
+      let me=this;
+      axios.put('api/Ingresos/Anular/'+this.adId,{}).then(function(response){
+          me.adModal=0;
+          me.adAccion=0;
+          me.adNombre="";
+          me.adId="";
+          me.listar();                       
+      }).catch(function(error){
+          console.log(error);
       });
-    },
+  },
     activarDesactivarMostrar(accion, item) {
       this.adModal = 1;
-      this.adNombre = item.nombre;
-      this.adId = item.idusuario;
+      this.adNombre = item.numComprobante;
+      this.adId = item.idingreso;
       if (accion == 1) {
 
         this.adAccion = 1;
