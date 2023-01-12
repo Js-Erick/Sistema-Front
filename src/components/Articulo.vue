@@ -1,8 +1,10 @@
 <template>
     <v-layout align-start>
         <v-flex>
-          <v-toolbar flat>
+          <v-toolbar flat color="white">
             <v-toolbar-title>Articulos</v-toolbar-title>
+            <v-spacer></v-spacer>
+            <v-btn @click="crearPDF"><v-icon>print</v-icon></v-btn>
             <v-divider class="mx-4" inset vertical></v-divider>
             <v-spacer></v-spacer>
             <v-text-field class="text-xs-center" v-model="search" append-icon="search" label="Busqueda" single-line hide-details></v-text-field>
@@ -10,7 +12,7 @@
             <v-dialog v-model="dialog" max-width="500px">
                 <template v-slot:activator="{ on, attrs }">
                     <v-btn color="primary" dark class="mb-2" v-bind="attrs" v-on="on">
-                        Nuevo Articulo
+                        Nuevo
                     </v-btn>
                 </template>
                 <v-card>
@@ -112,6 +114,8 @@
 </template>
 <script>
   import axios from 'axios';
+  import jsPDF from 'jspdf';
+  import autoTable from 'jspdf-autotable';
   export default {
     data: () => ({
       articulos:[],
@@ -169,15 +173,42 @@
     },
 
         methods: {
-          listar() {
-            let me = this;
-            axios.get('api/Articulos/Listar').then(function (response) {
-              //console.log(response);
-              me.articulos = response.data;
-            }).catch(function (error) {
-              console.log(error);
-            });
-            },
+
+        crearPDF(){
+          var columns = [
+          {title: "Nombre", dataKey:"nombre"},
+          {title: "Código", dataKey: "codigo"}, 
+          {title: "Categoría", dataKey: "categoria"}, 
+          {title: "Stock", dataKey: "stock"}, 
+          {title: "Precio Venta", dataKey: "precioVenta"}, 
+          
+        ];
+        var rows = [];
+        this.articulos.map(function(x){
+          rows.push({nombre:x.nombre,codigo:x.codigo,categoria:x.categoria,stock:x.stock,precioVenta:x.precioVenta});
+        });
+
+        // Only pt supported (not mm or in)
+        var doc = new jsPDF('p', 'pt');
+        doc.autoTable(columns, rows, {
+          
+          margin: {top: 60},
+          addPageContent: function(data) {
+            doc.text("Listado de Artículos", 40, 30);
+          }
+        });
+        doc.save('Articulos.pdf');
+      },
+
+        listar() {
+          let me = this;
+          axios.get('api/Articulos/Listar').then(function (response) {
+            //console.log(response);
+            me.articulos = response.data;
+          }).catch(function (error) {
+            console.log(error);
+          });
+        },
         select() {
           let me = this;
           let categoriasArray = []

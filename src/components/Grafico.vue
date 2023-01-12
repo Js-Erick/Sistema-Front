@@ -16,17 +16,18 @@
 import axios from 'axios'
 import Chart from 'chart.js'
 export default {
-  name: 'HelloWorld',
-  data: () => ({
-    mesesValores:null,
+  data(){
+    return {
+      mesesValores:null,
       nombreMeses:[],
       totalMeses:[]
-    }),
+    }
+  },
   methods:{
     loadProductosMasVendidos(){
       let me=this;
       let mesn='';
-      me.mesesValores.map(x=>{
+      me.mesesValores.map(function(x){
         switch(parseInt(x.etiqueta)){
           case 1:
             mesn='Enero';
@@ -124,7 +125,7 @@ export default {
       let me=this;
       let header={"Authorization" : "Bearer " + this.$store.state.token};
       let configuracion= {headers : header};
-      axios.get('api/Ventas/VentasMes12').then(response=>{
+      axios.get('api/Ventas/VentasMes12',configuracion).then(function(response){
           //console.log(response);
           me.mesesValores=response.data;
           me.loadProductosMasVendidos();
@@ -138,3 +139,9 @@ export default {
   }
 }
 </script>
+
+
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped>
+</style>

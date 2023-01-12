@@ -9,6 +9,9 @@ import Cliente from '../components/Cliente.vue'
 import Proveedor from '../components/Proveedor.vue'
 import Login from '../components/Login.vue'
 import Ingreso from '../components/Ingreso.vue'
+import Venta from '../components/Venta.vue'
+import ConsultaVenta from '../components/ConsultaVenta.vue'
+import ConsultaCompra from '../components/ConsultaCompra.vue' 
 import store from '../store/index'
 
 
@@ -76,6 +79,31 @@ const routes = [
     meta :{
       administrador :true,
       vendedor: true
+    }
+  },
+  {
+    path: '/ventas',
+    name: 'ventas',
+    component:Venta,
+    meta :{
+      administrador :true,
+      vendedor: true
+    }
+  },
+  {
+    path: '/consultaventas',
+    name: 'consultaventas',
+    component:ConsultaVenta,
+    meta :{
+      administrador :true
+    }
+  },
+  {
+    path: '/consultacompras',
+    name: 'consultacompras',
+    component:ConsultaCompra,
+    meta :{
+      administrador :true
     }
   },
   {
