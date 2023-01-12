@@ -151,17 +151,17 @@ export default {
       let me = this;
       let header = { "Authorization": "Bearer " + this.$store.state.token };
       let configuration = { headers: header };
-      axios.get('api/Categorias/Listar', configuration).then(function (response) {
+      axios.get('api/Categorias/Listar', configuration).then( response =>{
         //console.log(response);
 
         me.categorias = response.data;
-      }).catch(function (error) {
+      }).catch( error => {
         console.log(error);
       });
     },
     listar1() {
       let me = this;
-      axios.get('api/Categorias/Listar').then(function (response) {
+      axios.get('api/Categorias/Listar').then(response => {
 
         for (var x = 0; x < response.data.length; x++) {
 
@@ -179,7 +179,7 @@ export default {
 
         }
 
-      }).catch(function (error) {
+      }).catch(error =>  {
         console.log(error)
       });
     },
@@ -238,12 +238,12 @@ export default {
           'descripcion': me.descripcion,
           'condicion': me.condicion,
 
-        }).then(function (res) {
+        }).then(res =>  {
           console.log(res)
           me.close();
           me.listar();
           me.limpiar();
-        }).catch(function (error) {
+        }).catch( error => {
           console.log(error);
         });
       } else {
@@ -256,12 +256,12 @@ export default {
           'descripcion': me.descripcion,
           'condicion': me.condicion,
 
-        }).then(function (res) {
+        }).then(res =>  {
           console.log(res)
           me.close();
           me.listar();
           me.limpiar();
-        }).catch(function (error) {
+        }).catch(error =>  {
           console.log(error);
         });
       }
@@ -280,25 +280,25 @@ export default {
     },
     activar() {
       let me = this;
-      axios.put('api/Categorias/Activar/' + this.adId, {}).then(function (response) {
+      axios.put('api/Categorias/Activar/' + this.adId, {}).then(response => {
         me.adModal = 0;
         me.adAccion = 0;
         me.adNombre = "";
         me.adId = "";
         me.listar();
-      }).catch(function (error) {
+      }).catch(error =>  {
         console.log(error);
       });
     },
     desactivar() {
       let me = this;
-      axios.put('api/Categorias/Desactivar/' + this.adId, {}).then(function (response) {
+      axios.put('api/Categorias/Desactivar/' + this.adId, {}).then(response => { 
         me.adModal = 0;
         me.adAccion = 0;
         me.adNombre = "";
         me.adId = "";
         me.listar();
-      }).catch(function (error) {
+      }).catch(error =>  {
         console.log(error);
       });
     },

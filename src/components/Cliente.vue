@@ -136,10 +136,10 @@
         methods: {
         listar() {
             let me = this;
-            axios.get('api/Personas/ListarClientes').then(function (response) {
+            axios.get('api/Personas/ListarClientes').then(response => {
               console.log(response);
               me.clientes = response.data;
-            }).catch(function (error) {
+            }).catch(error => {
               console.log(error);
             });
             }, 
@@ -202,12 +202,12 @@
           'email': me.email,
          
                 
-          }).then(function(res){
+          }).then(res =>{
             console.log(res)
             me.close();
             me.listar();
             me.limpiar();
-          }).catch(function(error){
+          }).catch(error =>{
               console.log(error);
           });
           console.log(this.id)
@@ -225,12 +225,12 @@
             'telefono': me.telefono,
             'email': me.email,
             
-          }).then(function(res){
+          }).then(res =>{
             console.log(res)
             me.close();
             me.listar();
             me.limpiar();
-          }).catch(function(error){
+          }).catch(error =>{
               console.log(error);
           });
         }       

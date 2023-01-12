@@ -285,29 +285,29 @@ export default {
     buscarCodigo() {
       let me = this;
       me.errorArticulo = null;
-      axios.get('api/Articulos/BuscarCodigoIngreso/' + this.codigo).then(function (response) {
+      axios.get('api/Articulos/BuscarCodigoIngreso/' + this.codigo).then(response => {
         console.log(response);
         me.agregarDetalle(response.data);
-      }).catch(function (error) {
+      }).catch(error => {
         console.log(error);
         me.errorArticulo = 'No existe el artículo';
       });
     },
     listarArticulo() {
       let me = this;
-      axios.get('api/Articulos/ListarIngreso/' + me.texto).then(function (response) {
+      axios.get('api/Articulos/ListarIngreso/' + me.texto).then(response => {
         console.log(response);
         me.articulos = response.data;
-      }).catch(function (error) {
+      }).catch(error => {
         console.log(error);
       });
     },
     listarDetalles(id) {
       let me = this;
-      axios.get('api/Ingresos/ListarDetalles/' + id).then(function (response) {
+      axios.get('api/Ingresos/ListarDetalles/' + id).then(response => {
         //console.log(response);
         me.detalles = response.data;
-      }).catch(function (error) {
+      }).catch(error => {
         console.log(error);
       });
     },
@@ -361,23 +361,23 @@ export default {
 
     listar() {
       let me = this;
-      axios.get('api/Ingresos/Listar').then(function (response) {
+      axios.get('api/Ingresos/Listar').then(response => {
         console.log(response);
         me.ingresos = response.data;
-      }).catch(function (error) {
+      }).catch(error => {
         console.log(error);
       });
     },
     select() {
       let me = this;
       let proveedoresArray = []
-      axios.get('api/Personas/SelectProveedores').then(function (response) {
+      axios.get('api/Personas/SelectProveedores').then(response => {
         //console.log(response);
         proveedoresArray = response.data,
-          proveedoresArray.map(function (x) {
+          proveedoresArray.map(x => {
             me.proveedores.push({ text: x.nombre, value: x.idpersona })
           });
-      }).catch(function (error) {
+      }).catch(error => {
         console.log(error);
       });
     },
@@ -418,12 +418,12 @@ export default {
         'total': me.total,
         'detalles': me.detalles
 
-      }).then(function (res) {
+      }).then(res => {
         console.log(res)
         me.close();
         me.listar();
         me.limpiar();
-      }).catch(function (error) {
+      }).catch(error => {
         console.log(error);
       });
     },
@@ -451,28 +451,17 @@ export default {
       }
       return this.valida;
     },
-    /*activar() {
-      let me = this;
-      axios.put('api/Usuarios/Activar/' + this.adId, {}).then(function (response) {
-        me.adModal = 0;
-        me.adAccion = 0;
-        me.adNombre = "";
-        me.adId = "";
-        me.listar();
-      }).catch(function (error) {
-        console.log(error);
-      });
-    },*/
+  
     
     desactivar(){
       let me=this;
-      axios.put('api/Ingresos/Anular/'+this.adId,{}).then(function(response){
+      axios.put('api/Ingresos/Anular/'+this.adId,{}).then(response =>{
           me.adModal=0;
           me.adAccion=0;
           me.adNombre="";
           me.adId="";
           me.listar();                       
-      }).catch(function(error){
+      }).catch(error =>{
           console.log(error);
       });
   },
@@ -496,5 +485,18 @@ export default {
       this.adModal = 0;
     }
   },
+
+  /*activar() {
+      let me = this;
+      axios.put('api/Usuarios/Activar/' + this.adId, {}).then(function (response) {
+        me.adModal = 0;
+        me.adAccion = 0;
+        me.adNombre = "";
+        me.adId = "";
+        me.listar();
+      }).catch(function (error) {
+        console.log(error);
+      });
+    },*/
 }
 </script>

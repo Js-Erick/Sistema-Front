@@ -27,7 +27,7 @@ export default {
     loadProductosMasVendidos(){
       let me=this;
       let mesn='';
-      me.mesesValores.map(function(x){
+      me.mesesValores.map(x =>{
         switch(parseInt(x.etiqueta)){
           case 1:
             mesn='Enero';
@@ -125,11 +125,11 @@ export default {
       let me=this;
       let header={"Authorization" : "Bearer " + this.$store.state.token};
       let configuracion= {headers : header};
-      axios.get('api/Ventas/VentasMes12',configuracion).then(function(response){
+      axios.get('api/Ventas/VentasMes12',configuracion).then(response=>{
           //console.log(response);
           me.mesesValores=response.data;
           me.loadProductosMasVendidos();
-      }).catch(function(error){
+      }).catch(error =>{
           console.log(error);
       });
     }

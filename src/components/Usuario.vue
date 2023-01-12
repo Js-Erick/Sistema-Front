@@ -184,51 +184,28 @@
         methods: {
         listar() {
             let me = this;
-            axios.get('api/Usuarios/Listar').then(function (response) {
+            axios.get('api/Usuarios/Listar').then(response =>{
               console.log(response);
               me.usuarios = response.data;
-            }).catch(function (error) {
+            }).catch(error =>{
               console.log(error);
             });
             },
         select() {
           let me = this;
           let rolesArray = []
-          axios.get('api/Roles/Select').then(function (response) {
+          axios.get('api/Roles/Select').then(response =>{
             //console.log(response);
             rolesArray = response.data,
-              rolesArray.map(function (x) {
+              rolesArray.map(x =>{
                 me.roles.push({ text: x.nombre, value: x.idrol })
               });
-          }).catch(function (error) {
+          }).catch(error => {
             console.log(error);
           });
         },      
 
-      listar1(){
-        let me=this;
-        axios.get('api/Articulos/Listar').then(function(response){
-
-       for (var x = 0; x < response.data.length; x++) {
-
-          var estado = ''
-          if (response.data[x].condicion == true){
-            estado = 'Activo'
-          } else {
-            estado = 'Inactivo'
-          }
-          //console.log(estado)
-          response.data[x].condicion = estado
-         // for (response.data.length() )
-         // console.log(response.data[x].condicion); //response
-          me.categorias=response.data;
-
-        }
-
-        }).catch(function(error){
-          console.log(error)
-        });
-      },
+    
      
       editItem (item) {
         //console.log(this.id); 
@@ -296,12 +273,12 @@
             'password' : me.password,
             'act_password': me.act_Password
              
-          }).then(function(res){
+          }).then(res=>{
             console.log(res)
             me.close();
             me.listar();
             me.limpiar();
-          }).catch(function(error){
+          }).catch(error=>{
               console.log(error);
           });
         } else {
@@ -319,12 +296,12 @@
             'email': me.email,
             'password' : me.password
             
-          }).then(function(res){
+          }).then(res=>{
             console.log(res)
             me.close();
             me.listar();
             me.limpiar();
-          }).catch(function(error){
+          }).catch(error=>{
               console.log(error);
           });
         }       
@@ -356,25 +333,25 @@
       },
       activar(){
           let me=this;
-          axios.put('api/Usuarios/Activar/'+this.adId,{}).then(function(response){
+          axios.put('api/Usuarios/Activar/'+this.adId,{}).then(response=>{
               me.adModal=0;
               me.adAccion=0;
               me.adNombre="";
               me.adId="";
               me.listar();                       
-          }).catch(function(error){
+          }).catch(error=>{
               console.log(error);
           }); 
         },
       desactivar(){
         let me=this;
-          axios.put('api/Usuarios/Desactivar/'+this.adId,{}).then(function(response){
+          axios.put('api/Usuarios/Desactivar/'+this.adId,{}).then(response=>{
               me.adModal=0;
               me.adAccion=0;
               me.adNombre="";
               me.adId="";
               me.listar();                       
-          }).catch(function(error){
+          }).catch(error=>{
               console.log(error);
           });
         },    

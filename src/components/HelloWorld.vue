@@ -128,7 +128,7 @@ export default {
           //console.log(response);
           me.mesesValores=response.data;
           me.loadProductosMasVendidos();
-      }).catch(function(error){
+      }).catch(error=>{
           console.log(error);
       });
     }

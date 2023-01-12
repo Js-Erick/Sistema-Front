@@ -109,7 +109,7 @@ export default {
   }),
 
   computed: {
-    calcularTotal: function () {
+    calcularTotal:function(){
       var resultado = 0;
       for (var i = 0; i < this.detalles.length; i++) {
         resultado = resultado + (this.detalles[i].precio * this.detalles[i].cantidad);
@@ -146,10 +146,10 @@ export default {
     
     listarDetalles(id) {
       let me = this;
-      axios.get('api/Ingresos/ListarDetalles/' + id).then(function (response) {
+      axios.get('api/Ingresos/ListarDetalles/' + id).then(response =>{
         //console.log(response);
         me.detalles = response.data;
-      }).catch(function (error) {
+      }).catch(error => {
         console.log(error);
       });
     },
@@ -194,23 +194,23 @@ export default {
       else {
         url = 'api/Ingresos/ConsultaFechas/' + me.fecha_Inicio+'/'+me.fecha_Fin;
       }
-      axios.get(url).then(function (response) {
+      axios.get(url).then(response => {
         console.log(response);
         me.ingresos = response.data;
-      }).catch(function (error) {
+      }).catch(error => {
         console.log(error);
       });
     },
     select() {
       let me = this;
       let proveedoresArray = []
-      axios.get('api/Personas/SelectProveedores').then(function (response) {
+      axios.get('api/Personas/SelectProveedores').then(response => {
         //console.log(response);
         proveedoresArray = response.data,
-          proveedoresArray.map(function (x) {
+          proveedoresArray.map(x => {
             me.proveedores.push({ text: x.nombre, value: x.idpersona })
           });
-      }).catch(function (error) {
+      }).catch(error => {
         console.log(error);
       });
     },

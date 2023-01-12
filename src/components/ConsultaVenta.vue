@@ -318,7 +318,7 @@ export default {
 
     crearPDF(){
       var quotes = document.getElementById('factura');
-      html2canvas(quotes).then(function(canvas){
+      html2canvas(quotes).then(canvas =>{
         var imgData = canvas.toDataURL('image/png')
         var imgWidth = 210;
         var pageHeight= 295;
@@ -364,10 +364,10 @@ export default {
    
     listarDetalles(id) {
       let me = this;
-      axios.get('api/Ingresos/ListarDetalles/' + id).then(function (response) {
+      axios.get('api/Ingresos/ListarDetalles/' + id).then(response =>{
         //console.log(response);
         me.detalles = response.data;
-      }).catch(function (error) {
+      }).catch(error => {
         console.log(error);
       });
     },
@@ -413,10 +413,10 @@ export default {
       else {
         url = 'api/Ventas/ConsultaFechas/' + me.fecha_Inicio+'/'+me.fecha_Fin;
       }
-      axios.get(url).then(function (response) {
+      axios.get(url).then(response => {
         //console.log(response);
         me.ventas = response.data;
-      }).catch(function (error) {
+      }).catch(error => {
         console.log(error);
       });
     },
@@ -424,13 +424,13 @@ export default {
     select() {
       let me = this;
       let clientesArray = []
-      axios.get('api/Personas/SelectClientes').then(function (response) {
+      axios.get('api/Personas/SelectClientes').then(response => {
         console.log(response);
         clientesArray = response.data,
-          clientesArray.map(function (x) {
+          clientesArray.map(x => {
             me.clientes.push({ text: x.nombre, value: x.idpersona })
           });
-      }).catch(function (error) {
+      }).catch(error => {
         console.log(error);
       });
     },

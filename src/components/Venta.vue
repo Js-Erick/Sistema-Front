@@ -389,7 +389,7 @@ export default {
 
     crearPDF(){
       var quotes = document.getElementById('factura');
-      html2canvas(quotes).then(function(canvas){
+      html2canvas(quotes).then(canvas=>{
         var imgData = canvas.toDataURL('image/png')
         var imgWidth = 210;
         var pageHeight= 295;
@@ -435,29 +435,29 @@ export default {
     buscarCodigo() {
       let me = this;
       me.errorArticulo = null;
-      axios.get('api/Articulos/BuscarCodigoVenta/' + this.codigo).then(function (response) {
+      axios.get('api/Articulos/BuscarCodigoVenta/' + this.codigo).then(response => {
         console.log(response);
         me.agregarDetalle(response.data);
-      }).catch(function (error) {
+      }).catch(error =>{
         console.log(error);
         me.errorArticulo = 'No existe el artículo';
       });
     },
     listarArticulo() {
       let me = this;
-      axios.get('api/Articulos/ListarVenta/' + me.texto).then(function (response) {
+      axios.get('api/Articulos/ListarVenta/' + me.texto).then(response=>{
         console.log(response);
         me.articulos = response.data;
-      }).catch(function (error) {
+      }).catch(error => {
         console.log(error);
       });
     },
     listarDetalles(id) {
       let me = this;
-      axios.get('api/Ingresos/ListarDetalles/' + id).then(function (response) {
+      axios.get('api/Ingresos/ListarDetalles/' + id).then(response => {
         //console.log(response);
         me.detalles = response.data;
-      }).catch(function (error) {
+      }).catch(error => {
         console.log(error);
       });
     },
@@ -516,10 +516,10 @@ export default {
       else {
         url = 'api/Ventas/ListarFiltro/' + me.search;
       }
-      axios.get(url).then(function (response) {
+      axios.get(url).then(response =>{
         //console.log(response);
         me.ventas = response.data;
-      }).catch(function (error) {
+      }).catch(error =>{
         console.log(error);
       });
     },
@@ -527,13 +527,13 @@ export default {
     select() {
       let me = this;
       let clientesArray = []
-      axios.get('api/Personas/SelectClientes').then(function (response) {
+      axios.get('api/Personas/SelectClientes').then(response =>{
         console.log(response);
         clientesArray = response.data,
-          clientesArray.map(function (x) {
+          clientesArray.map(x =>{
             me.clientes.push({ text: x.nombre, value: x.idpersona })
           });
-      }).catch(function (error) {
+      }).catch(error =>{
         console.log(error);
       });
     },
@@ -573,12 +573,12 @@ export default {
         'total': me.total,
         'detalles': me.detalles
 
-      }).then(function (res) {
+      }).then(res =>{
         console.log(res)
         me.close();
         me.listar();
         me.limpiar();
-      }).catch(function (error) {
+      }).catch(error =>{
         console.log(error);
       });
     },
@@ -621,13 +621,13 @@ export default {
 
     desactivar() {
       let me = this;
-      axios.put('api/Ventas/Anular/' + this.adId, {}).then(function (response) {
+      axios.put('api/Ventas/Anular/' + this.adId, {}).then(response =>{
         me.adModal = 0;
         me.adAccion = 0;
         me.adNombre = "";
         me.adId = "";
         me.listar();
-      }).catch(function (error) {
+      }).catch(error =>{
         console.log(error);
       });
     },
