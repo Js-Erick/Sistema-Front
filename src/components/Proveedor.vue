@@ -64,7 +64,7 @@
         <template v-slot:top>
         </template>
         <template v-slot:item.actions="{ item }">
-          <v-icon small class="mr-2" @click="editItem(item)">
+          <v-icon small color="green" class="mr-2" @click="editItem(item)">
             edit
           </v-icon>
         </template>

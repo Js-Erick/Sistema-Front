@@ -189,14 +189,14 @@
         </template>
 
         <template v-slot:item.actions="{ item }">
-          <v-icon small class="mr-2" @click="verDetalles(item)">
+          <v-icon small color="brown" class="mr-2" @click="verDetalles(item)">
             tab
           </v-icon>
-          <v-icon small class="mr-2" @click="mostrarComprobante(item)">
+          <v-icon small color="black" class="mr-2" @click="mostrarComprobante(item)">
             print
           </v-icon>
           <template v-if="item.estado == 'Aceptado'">
-            <v-icon small @click="activarDesactivarMostrar(2, item)">
+            <v-icon small color="red" @click="activarDesactivarMostrar(2, item)">
               block
             </v-icon>
           </template>

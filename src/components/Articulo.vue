@@ -90,16 +90,16 @@
           </template>
         </template>
         <template v-slot:item.actions="{ item }">
-          <v-icon small class="mr-2" @click="editItem(item)">
+          <v-icon small color="green" class="mr-2" @click="editItem(item)">
             edit
           </v-icon>
           <template v-if="item.condicion">
-            <v-icon small @click="activarDesactivarMostrar(2, item)">
+            <v-icon small color="red" @click="activarDesactivarMostrar(2, item)">
               block
             </v-icon>
           </template>
           <template v-else>
-            <v-icon small @click="activarDesactivarMostrar(1, item)">
+            <v-icon small color="blue" @click="activarDesactivarMostrar(1, item)">
               check
             </v-icon>
           </template>

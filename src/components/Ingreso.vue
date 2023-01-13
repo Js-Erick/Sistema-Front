@@ -81,7 +81,7 @@
         </template>
         <template v-slot:item.estado="{item}">
             <template v-if="item.estado ==='Aceptado'">
-               <span class="blue--text">Aceptado</span>
+              <span class="blue--text">Aceptado</span>
             </template>
             <template v-else>
                 <span class="red--text">Inactivo</span>
@@ -89,11 +89,11 @@
         </template>
     
         <template v-slot:item.actions="{ item }">
-          <v-icon small class="mr-2" @click="verDetalles(item)">
+          <v-icon small  color="brown" class="mr-2" @click="verDetalles(item)">
               tab
           </v-icon>
           <template v-if="item.estado == 'Aceptado'">
-            <v-icon small @click="activarDesactivarMostrar(2, item)">
+            <v-icon small color="red" @click="activarDesactivarMostrar(2, item)">
               block
             </v-icon>
           </template>

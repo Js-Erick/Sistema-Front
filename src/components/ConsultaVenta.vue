@@ -130,7 +130,7 @@
           <v-icon small class="mr-2" @click="verDetalles(item)">
             tab
           </v-icon>
-          <v-icon small class="mr-2" @click="mostrarComprobante(item)">
+          <v-icon small color="black" class="mr-2" @click="mostrarComprobante(item)">
             print
           </v-icon>
         </template>
