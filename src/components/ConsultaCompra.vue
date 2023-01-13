@@ -16,9 +16,10 @@
       <v-data-table :headers="headers" :items="ingresos" :search="search" class="elevation-1" v-if="verNuevo == 0">
         <template v-slot:top>
         </template>
+        
         <template v-slot:item.estado="{item}">
             <template v-if="item.estado ==='Aceptado'">
-               <span class="blue--text">Aceptado</span>
+              <span class="blue--text">Aceptado</span>
             </template>
             <template v-else>
                 <span class="red--text">Inactivo</span>
@@ -30,6 +31,9 @@
               tab
           </v-icon>
         </template>
+        <template v-slot:item.fechaHora="{ item }">
+        {{ formatFecha(item.fechaHora)}} 
+        </template>
         <template v-slot:no-data>
           <v-btn color="primary" @click="listar">
             Reset
@@ -37,7 +41,6 @@
         </template>
       </v-data-table>
       <v-spacer></v-spacer>
-     
     </v-flex>
   </v-layout>
 </template>
@@ -133,6 +136,31 @@ export default {
   },
 
   methods: {
+
+    formatFecha(f){
+      var fecha = new Date(f)
+      let day = fecha.getDate();
+      let month = fecha.getMonth()+1;
+      let year = fecha.getFullYear();
+
+      if (month < 10){
+        if (day > 9)
+          return day + '-0'+month+'-'+year
+        else
+          return '0'+day+'-0'+month+'-'+year
+      }
+      else{
+        if(day > 9)
+          return day+'-'+month+'-'+year
+        else
+          return '-0'+day+'-0'+month+'-'+year
+      }
+    },
+
+    formatFecha2(f){
+      var fecha = new Date(f).toISOString().substring(0, 10);
+      return fecha;
+    },
 
     mostrarNuevo() {
       this.verNuevo = 1;

@@ -200,7 +200,9 @@
               block
             </v-icon>
           </template>
-
+        </template>
+        <template v-slot:item.fechaHora="{ item }">
+        {{ formatFecha(item.fechaHora)}} 
         </template>
         <template v-slot:no-data>
           <v-btn color="primary" @click="listar">
@@ -386,6 +388,32 @@ export default {
   },
 
   methods: {
+
+    formatFecha(f){
+      var fecha = new Date(f)
+      let day = fecha.getDate();
+      let month = fecha.getMonth()+1;
+      let year = fecha.getFullYear();
+
+      if (month < 10){
+        if (day > 9)
+          return day + '-0'+month+'-'+year
+        else
+          return '0'+day+'-0'+month+'-'+year
+      }
+      else{
+        if(day > 9)
+          return day+'-'+month+'-'+year
+        else
+          return '-0'+day+'-0'+month+'-'+year
+      }
+    },
+
+    formatFecha2(f){
+      var fecha = new Date(f).toISOString().substring(0, 10);
+      return fecha;
+    },
+    
 
     crearPDF(){
       var quotes = document.getElementById('factura');
