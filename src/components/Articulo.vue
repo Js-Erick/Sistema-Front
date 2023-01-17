@@ -20,7 +20,6 @@
             <v-card-title>
               <span class="text-h5">{{ formTitle }}</span>
             </v-card-title>
-
             <v-card-text>
               <v-container>
                 <v-row>
@@ -93,6 +92,9 @@
           <v-icon small color="green" class="mr-2" @click="editItem(item)">
             edit
           </v-icon>
+          <v-icon v-if="esAdministrador" small color="red" class="mr-2" @click="borrarRegistro(item)" >
+            delete
+          </v-icon>
           <template v-if="item.condicion">
             <v-icon small color="red" @click="activarDesactivarMostrar(2, item)">
               block
@@ -110,6 +112,22 @@
           </v-btn>
         </template>
       </v-data-table>
+      <v-dialog  v-model="dialogDelete" max-width="400px" >
+        <v-card>
+          <v-card-title>
+            Estas seguro de eliminar el registro??
+          </v-card-title>
+          <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="info" text @click="closeDelete">
+                Cancelar
+              </v-btn>
+              <v-btn color="info" text @click="eliminar">
+                Aceptar
+              </v-btn>
+            </v-card-actions>
+        </v-card>
+      </v-dialog>
     </v-flex>
   </v-layout>
 </template>
@@ -125,7 +143,7 @@ export default {
     adAccion: 0,
     adNombre: '',
     adId: '',
-    dialogDelete: false,
+    dialogDelete:0,
     headers: [
       { text: 'Código', value: 'codigo', sortable: false },
       { text: 'Nombre', value: 'nombre' },
@@ -156,6 +174,10 @@ export default {
   computed: {
     formTitle() {
       return this.editedIndex === -1 ? 'Nuevo Articulo' : 'Editar Articulo'
+    },
+
+    esAdministrador(){
+      return this.$store.state.usuario && this.$store.state.usuario.rol =='Administrador';
     },
   },
 
@@ -226,7 +248,7 @@ export default {
 
 
     editItem(item) {
-      //console.log(this.id); 
+      console.log(item.idarticulo); 
       this.id = item.idarticulo;
       this.idcategoria = item.idcategoria;
       this.codigo = item.codigo;
@@ -245,12 +267,9 @@ export default {
     },
 
     closeDelete() {
-      this.dialogDelete = false
-      this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem)
-        this.editedIndex = -1
-      })
+      this.dialogDelete = 0
     },
+
     limpiar() {
       this.id = '';
       this.nombre = '';
@@ -269,7 +288,7 @@ export default {
       if (this.editedIndex > -1) {
         //Editar
         let me = this;
-        //console.log(this.id)
+        console.log(this.id)
         axios.put('api/Articulos/Actualizar', {
           'idarticulo': me.id,
           'idcategoria': me.idcategoria,
@@ -332,6 +351,19 @@ export default {
       }
       return this.valida;
     },
+
+    eliminar(){
+      let me = this;
+      axios.delete('api/Articulos/Eliminar/' + this.id, {}).then(response =>{
+      console.log(response)
+      me.adId = "";
+      me.dialogDelete = 0;
+      me.listar();
+      }).catch(error =>{
+        console.log(error);
+      });
+    },
+
     activar() {
       let me = this;
       axios.put('api/Articulos/Activar/' + this.adId, {}).then(response => {
@@ -347,6 +379,7 @@ export default {
     desactivar() {
       let me = this;
       axios.put('api/Articulos/Desactivar/' + this.adId, {}).then(response => {
+        console.log(me.adId)
         me.adModal = 0;
         me.adAccion = 0;
         me.adNombre = "";
@@ -376,7 +409,12 @@ export default {
       this.adModal = 0;
     },
 
-   /*  crearPDF() {
+    borrarRegistro(item){
+      this.id = item.idarticulo;
+      this.dialogDelete=1;
+    },
+
+  /*  crearPDF() {
       var columns = [
         { title: "Nombre", dataKey: "nombre" },
         { title: "Código", dataKey: "codigo" },

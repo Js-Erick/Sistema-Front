@@ -3,8 +3,8 @@
     
     <v-navigation-drawer
       fixed
-      clipped="$vuetify.breakpoint.mdAndUp"
       v-model="drawer"
+      :clipped="$vuetify.breakpoint.mdAndUp"
       app
       v-if="logueado"
     >
@@ -183,7 +183,6 @@
     dark
     :clipped-left="$vuetify.breakpoint.mdAndUp"
     fixed
-    src="https://cdn.vuetifyjs.com/images/backgrounds/vbanner.jpg1"
     >
       <v-toolbar-title  style="width: 300px" class="ml-0 pl-3">
         <v-app-bar-nav-icon  @click.stop="drawer = !drawer"></v-app-bar-nav-icon>

@@ -78,6 +78,9 @@
           <v-icon small color="green" class="mr-2" @click="editItem(item)">
             edit
           </v-icon>
+          <v-icon v-if="esAdministrador" small color="red" class="mr-2" @click="borrarRegistro(item)" >
+            delete
+          </v-icon>
           <template v-if="item.condicion">
             <v-icon small color="red" class="mr-2" @click="activarDesactivarMostrar(2, item)">
               block
@@ -95,6 +98,22 @@
           </v-btn>
         </template>
       </v-data-table>
+      <v-dialog  v-model="dialogDelete" max-width="400px" >
+        <v-card>
+          <v-card-title>
+            Estas seguro de eliminar el registro??
+          </v-card-title>
+          <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="info" text @click="closeDelete">
+                Cancelar
+              </v-btn>
+              <v-btn color="info" text @click="eliminar">
+                Aceptar
+              </v-btn>
+            </v-card-actions>
+        </v-card>
+      </v-dialog>
     </v-flex>
   </v-layout>
 </template>
@@ -108,7 +127,7 @@ export default {
     adAccion: 0,
     adNombre: '',
     adId: '',
-    dialogDelete: false,
+    dialogDelete: 0,
     headers: [
       { text: 'Nombre', value: 'nombre' },
       { text: 'Descripcion', value: 'descripcion', sortable: false },
@@ -129,6 +148,10 @@ export default {
   computed: {
     formTitle() {
       return this.editedIndex === -1 ? 'Nueva Categoria' : 'Editar Categoria'
+    },
+
+    esAdministrador(){
+      return this.$store.state.usuario && this.$store.state.usuario.rol =='Administrador';
     },
   },
 
@@ -160,24 +183,13 @@ export default {
     },
     
     editItem(item) {
+      console.log(item.idcategoria);
       this.id = item.idcategoria;
-      console.log(this.id);
       this.nombre = item.nombre;
       this.descripcion = item.descripcion;
       this.editedIndex = 1;
       this.dialog = true
 
-    },
-
-    deleteItem(item) {
-      this.editedIndex = this.desserts.indexOf(item)
-      this.editedItem = Object.assign({}, item)
-      this.dialogDelete = true
-    },
-
-    deleteItemConfirm() {
-      this.desserts.splice(this.editedIndex, 1)
-      this.closeDelete()
     },
 
     close() {
@@ -186,17 +198,13 @@ export default {
     },
 
     closeDelete() {
-      this.dialogDelete = false
-      this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem)
-        this.editedIndex = -1
-      })
+      this.dialogDelete = 0
     },
+
     limpiar() {
       this.id = '';
       this.nombre = '';
       this.descripcion = '';
-      this.editedIndex = -1;
     },
 
     guardar() {
@@ -255,7 +263,7 @@ export default {
     },
     activar() {
       let me = this;
-      axios.put('api/Categorias/Activar/' + this.adId, {}).then(response => {
+      axios.put('api/Categorias/Activar/' + this.id, {}).then(response => {
         me.adModal = 0;
         me.adAccion = 0;
         me.adNombre = "";
@@ -265,6 +273,19 @@ export default {
         console.log(error);
       });
     },
+
+    eliminar(){
+      let me = this;
+      axios.delete('api/Categorias/Eliminar/' + this.id, {}).then(response =>{
+      console.log(response)
+      me.adId = "";
+      me.dialogDelete = 0;
+      me.listar();
+      }).catch(error =>{
+        console.log(error);
+      });
+    },
+    
     desactivar() {
       let me = this;
       axios.put('api/Categorias/Desactivar/' + this.adId, {}).then(response => { 
@@ -295,7 +316,22 @@ export default {
     },
     activarDesactivarCerrar() {
       this.adModal = 0;
-    }
+    },
+
+    borrarRegistro(item){
+      this.id = item.idarticulo;
+      this.dialogDelete=1;
+    },
+
+    closeDelete() {
+      this.dialogDelete = 0
+    },
+
+    borrarRegistro(item){
+      console.log(item.idcategoria)
+      this.id = item.idcategoria;
+      this.dialogDelete=1;
+    },
 
   },
 }

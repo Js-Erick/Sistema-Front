@@ -51,7 +51,7 @@
           <v-dialog v-model="adModal" max-width="500px">
             <v-card>
               <v-card-title class="text-h5" v-if="adAccion == 1">¿Activar Item?</v-card-title>
-              <v-card-title class="text-h5" v-if="adAccion == 2">¿Anular Ingreso?</v-card-title>
+              <v-card-title class="text-h5" v-if="adAccion == 2">¿Anular Venta?</v-card-title>
               <v-card-text>
                 Estás a punto de
                 <span v-if="(adAccion == 1)">Activar</span>
@@ -80,8 +80,11 @@
             </template>
           </template>
           <template v-slot:item.actions="{ item }">
-            <v-icon small  color="brown" class="mr-2" @click="verDetalles(item)">
-                tab
+            <v-icon small  color="brown" class="mr-2" @click="verDatosDetalles(item)">
+              tab
+            </v-icon>
+            <v-icon v-if="esAdministrador" small color="red" class="mr-2" @click="borrarRegistro(item)" >
+              delete
             </v-icon>
             <template v-if="item.estado == 'Aceptado'">
               <v-icon small color="red" @click="activarDesactivarMostrar(2, item)">
@@ -196,6 +199,33 @@
             </v-flex>
           </v-layout>
         </v-container>
+        <v-dialog v-model="verDeta" max-width="600px">
+          <v-card>
+            <v-card-title class="text-h6">Detalles</v-card-title>           
+            <v-data-table :headers="headerDetalles" :items="detalles" :search="search"  class="elevation-1" ></v-data-table>
+            <v-card-actions>
+              <v-btn color="info" text @click="closeDeta">
+                Cerrar
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+        <v-dialog v-model="dialogDelete" max-width="400px">
+        <v-card>
+          <v-card-title>
+            Estas seguro de eliminar el registro??
+          </v-card-title>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="info" text @click="closeDelete">
+              Cancelar
+            </v-btn>
+            <v-btn color="info" text @click="eliminar">
+              Aceptar
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
       </v-flex>
     </v-layout>
   </template>
@@ -209,7 +239,7 @@
       adAccion: 0,
       adNombre: '',
       adId: '',
-      dialogDelete: false,
+      dialogDelete:0,
       valida: 0,
       validaMensaje: [],
       search: '',
@@ -263,6 +293,13 @@
       total: 0,
       verArticulos: 0,
       verDet: 0,
+      verDeta:0,
+      headerDetalles:[
+        { text: 'Articulo', value: 'idarticuloNavigation.nombre', sortable: false },
+        { text: 'Cantidad', value: 'cantidad', sortable: false },
+        { text: 'Precio', value: 'precio', sortable: false },
+        { text: 'Descuento', value: 'descuento', sortable: false },
+      ]
   
     }),
   
@@ -273,7 +310,11 @@
           resultado = resultado + (this.detalles[i].precio * this.detalles[i].cantidad-this.detalles[i].descuento);
         }
         return resultado;
-      }
+      },
+
+      esAdministrador(){
+      return this.$store.state.usuario && this.$store.state.usuario.rol =='Administrador';
+    },
     },
   
     watch: {
@@ -355,17 +396,18 @@
           console.log(error);
         });
       },
+      
       listarDetalles(id) {
         let me = this;
-        axios.get('api/Ingresos/ListarDetalles/' + id).then(response => {
-          //console.log(response);
+        axios.get('api/Ventas/ListarDetalles/' + id).then(response => {
+          console.log(response);
           me.detalles = response.data;
         }).catch(error => {
           console.log(error);
         });
       },
   
-      verDetalles(item) {
+      /*verDetalles(item) {
         this.limpiar();
         this.tipoComprobante = item.tipoComprobante;
         this.serieComprobante = item.serieComprobante;
@@ -375,6 +417,22 @@
         this.listarDetalles(item.idingreso);
         this.verNuevo = 1;
         this.verDet = 1;
+      },*/
+
+      verDatosDetalles(item){
+       //this.limpiar();
+        this.tipoComprobante = item.tipoComprobante;
+        this.serieComprobante = item.serieComprobante;
+        this.numComprobante = item.numComprobante;
+        this.idproveedor = item.idproveedor;
+        this.impuesto = item.impuesto;
+        this.listarDetalles(item.idventa);
+        this.verDeta = 1;
+      },
+
+      closeDeta(){
+        this.limpiar();
+        this.verDeta = 0;
       },
   
       mostrarArticulos() {
@@ -395,7 +453,6 @@
         }
       },
       
-  
       eliminarDetalle(arr, item) {
         var i = arr.indexOf(item);
         if (i !== -1) {
@@ -421,7 +478,7 @@
         url = 'api/Ventas/ListarFiltro/' + me.search;
       }
       axios.get(url).then(response =>{
-        //console.log(response);
+        console.log(response);
         me.ventas = response.data;
       }).catch(error =>{
         console.log(error);
@@ -509,12 +566,24 @@
         }
         return this.valida;
       },
+
+      eliminar(){
+      let me = this;
+      axios.delete('api/Ventas/Eliminar/' + this.id, {}).then(response =>{
+      console.log(response)
+      me.adId = "";
+      me.dialogDelete = 0;
+      me.listar();
+      }).catch(error =>{
+        console.log(error);
+      });
+    },
     
       
       desactivar(){
         let me=this;
   
-        axios.put('api/Ingresos/Anular/'+this.adId,{},).then(() => {
+        axios.put('api/Ventas/Anular/'+this.adId,{},).then(() => {
             me.adModal=0;
             me.adAccion=0;
             me.adNombre="";
@@ -527,7 +596,7 @@
       activarDesactivarMostrar(accion, item) {
         this.adModal = 1;
         this.adNombre = item.numComprobante;
-        this.adId = item.idingreso;
+        this.adId = item.idventa;
         if (accion == 1) {
   
           this.adAccion = 1;
@@ -542,7 +611,16 @@
       },
       activarDesactivarCerrar() {
         this.adModal = 0;
-      }
+      },
+
+      closeDelete() {
+      this.dialogDelete = 0
+    },
+
+    borrarRegistro(item) {
+      this.id = item.idventa;
+      this.dialogDelete = 1;
+    },
     },
   
     /*activar() {

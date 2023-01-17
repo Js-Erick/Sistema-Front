@@ -67,6 +67,9 @@
           <v-icon small color="green" class="mr-2" @click="editItem(item)">
             edit
           </v-icon>
+          <v-icon v-if="esAdministrador" small color="red" class="mr-2" @click="borrarRegistro(item)">
+            delete
+          </v-icon>
         </template>
         <template v-slot:no-data>
           <v-btn color="primary" @click="listar">
@@ -74,6 +77,22 @@
           </v-btn>
         </template>
       </v-data-table>
+      <v-dialog  v-model="dialogDelete" max-width="400px" >
+        <v-card>
+          <v-card-title>
+            Estas seguro de eliminar el registro??
+          </v-card-title>
+          <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="info" text @click="closeDelete">
+                Cancelar
+              </v-btn>
+              <v-btn color="info" text @click="eliminar">
+                Aceptar
+              </v-btn>
+            </v-card-actions>
+        </v-card>
+      </v-dialog>
     </v-flex>
   </v-layout>
 </template>
@@ -87,7 +106,7 @@ export default {
     adAccion: 0,
     adNombre: '',
     adId: '',
-    dialogDelete: false,
+    dialogDelete:0,
     valida: 0,
     validaMensaje: [],
     search: '',
@@ -117,6 +136,10 @@ export default {
   computed: {
     formTitle() {
       return this.editedIndex === -1 ? 'Nuevo Proveedor' : 'Editar Proveedor'
+    },
+
+    esAdministrador(){
+      return this.$store.state.usuario && this.$store.state.usuario.rol =='Administrador';
     },
   },
 
@@ -166,11 +189,8 @@ export default {
     },
 
     closeDelete() {
-      this.dialogDelete = false
-      this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem)
-        this.editedIndex = -1
-      })
+      this.dialogDelete = 0
+      
     },
     limpiar() {
       this.id = '';
@@ -237,6 +257,18 @@ export default {
       }
     },
 
+    eliminar(){
+      let me = this;
+      axios.delete('api/Personas/Eliminar/' + this.id, {}).then(response =>{
+      console.log(response)
+      me.adId = "";
+      me.dialogDelete = 0;
+      me.listar();
+      }).catch(error =>{
+        console.log(error);
+      });
+    },
+
     validar() {
       this.valida = 0;
       this.validaMensaje = [];
@@ -266,7 +298,10 @@ export default {
       return this.valida;
     },
 
-
+    borrarRegistro(item){
+      this.id = item.idpersona;
+      this.dialogDelete=1;
+    },
   },
 }
 </script>
