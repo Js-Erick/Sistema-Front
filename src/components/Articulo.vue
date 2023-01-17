@@ -12,8 +12,8 @@
         <v-spacer></v-spacer>
         <v-dialog v-model="dialog" max-width="500px">
           <template v-slot:activator="{ on, attrs }">
-            <v-btn color="primary" dark class="mb-2" v-bind="attrs" v-on="on">
-              Nuevo
+            <v-btn color="info" dark class="mb-2" v-bind="attrs" v-on="on">
+              Nuevo artículo
             </v-btn>
           </template>
           <v-card>
@@ -50,10 +50,10 @@
             </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="close">
+              <v-btn color="info" text @click="close">
                 Cancelar
               </v-btn>
-              <v-btn color="blue darken-1" text @click="guardar">
+              <v-btn color="info" text @click="guardar">
                 Guardar
               </v-btn>
             </v-card-actions>

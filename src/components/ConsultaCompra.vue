@@ -112,7 +112,7 @@ export default {
   }),
 
   computed: {
-    calcularTotal:function(){
+    calcularTotal:() => {
       var resultado = 0;
       for (var i = 0; i < this.detalles.length; i++) {
         resultado = resultado + (this.detalles[i].precio * this.detalles[i].cantidad);
@@ -223,7 +223,7 @@ export default {
         url = 'api/Ingresos/ConsultaFechas/' + me.fecha_Inicio+'/'+me.fecha_Fin;
       }
       axios.get(url).then(response => {
-        console.log(response);
+        //console.log(response);
         me.ingresos = response.data;
       }).catch(error => {
         console.log(error);

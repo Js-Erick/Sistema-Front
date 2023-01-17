@@ -21,7 +21,7 @@
                     <v-card-text>
                         <v-container>
                             <v-row>
-                               <v-col cols="12" sm="12" md="12">
+                              <v-col cols="12" sm="12" md="12">
                                     <v-text-field v-model="nombre" label="Nombre"></v-text-field>
                                 </v-col>
 
@@ -49,10 +49,10 @@
                     </v-card-text>
                     <v-card-actions>
                         <v-spacer></v-spacer>
-                        <v-btn color="blue darken-1" text @click="close">
+                        <v-btn color="info" text @click="close">
                             Cancelar
                         </v-btn>
-                        <v-btn color="blue darken-1" text @click="guardar">
+                        <v-btn color="info" text @click="guardar">
                             Guardar
                         </v-btn>
                     </v-card-actions>
@@ -242,19 +242,34 @@
         if(this.nombre.length<3 || this.nombre.length >100){
             this.validaMensaje.push("El nombre debe tener más de 3 caracteres y menos que 100.")
         }
-       
+      
         if(!this.tipoDocumento){
             this.validaMensaje.push("Selecione un tipo de documento.")
         }
+
+        if(!this.numDocumento){
+            this.validaMensaje.push("Ingrese número de documento.")
+        }
+
+        if(!this.telefono){
+            this.validaMensaje.push("Ingrese número de teléfono.")
+        }
+
+        if(!this.email){
+            this.validaMensaje.push("Ingrese su email.")
+        }
+
+        if(!this.direccion){
+            this.validaMensaje.push("Ingrese su dirección.")
+        }
         
-     
         if (this.validaMensaje.length){
           this.valida=1;
         }
         return this.valida;
       },
 
-       
-   },
+    
+    },
   }
 </script>

@@ -244,7 +244,6 @@ export default {
       { text: 'Total', value: 'total', sortable: false },
       { text: 'Fecha', value: 'fechaHora', sortable: false },
       { text: 'Estado', value: 'estado', sortable: false },
-      { text: 'Opciones', value: 'actions', sortable: false },
     ],
 
     id: 0,
@@ -292,15 +291,6 @@ export default {
 
   }),
 
-  computed: {
-    calcularTotal: function () {
-      var resultado = 0;
-      for (var i = 0; i < this.detalles.length; i++) {
-        resultado = resultado + (this.detalles[i].precio * this.detalles[i].cantidad - this.detalles[i].descuento);
-      }
-      return resultado;
-    }
-  },
 
   watch: {
     dialog(val) {
@@ -382,11 +372,11 @@ export default {
       this.limpiar();
     },
 
-   
+
     listarDetalles(id) {
       let me = this;
       axios.get('api/Ingresos/ListarDetalles/' + id).then(response =>{
-        //console.log(response);
+        console.log(response);
         me.detalles = response.data;
       }).catch(error => {
         console.log(error);
@@ -435,7 +425,7 @@ export default {
         url = 'api/Ventas/ConsultaFechas/' + me.fecha_Inicio+'/'+me.fecha_Fin;
       }
       axios.get(url).then(response => {
-        //console.log(response);
+        console.log(response);
         me.ventas = response.data;
       }).catch(error => {
         console.log(error);

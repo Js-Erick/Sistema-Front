@@ -21,7 +21,7 @@
                     <v-card-text>
                         <v-container>
                             <v-row>
-                               <v-col cols="12" sm="6" md="6">
+                              <v-col cols="12" sm="6" md="6">
                                     <v-text-field v-model="nombre" label="Nombre"></v-text-field>
                                 </v-col>
                                 <v-col cols="12" sm="6" md="6">
@@ -54,10 +54,10 @@
                     </v-card-text>
                     <v-card-actions>
                         <v-spacer></v-spacer>
-                        <v-btn color="blue darken-1" text @click="close">
+                        <v-btn color="info" text @click="close">
                             Cancelar
                         </v-btn>
-                        <v-btn color="blue darken-1" text @click="guardar">
+                        <v-btn color="info" text @click="guardar">
                             Guardar
                         </v-btn>
                     </v-card-actions>

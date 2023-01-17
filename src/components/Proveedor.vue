@@ -50,10 +50,10 @@
             </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="close">
+              <v-btn color="info" text @click="close">
                 Cancelar
               </v-btn>
-              <v-btn color="blue darken-1" text @click="guardar">
+              <v-btn color="info" text @click="guardar">
                 Guardar
               </v-btn>
             </v-card-actions>
@@ -248,6 +248,17 @@ export default {
         this.validaMensaje.push("Selecione un tipo de documento.")
       }
 
+      if (!this.numDocumento) {
+        this.validaMensaje.push("Ingrese el número de documento.")
+      }
+
+      if (!this.email) {
+        this.validaMensaje.push("Ingrese el email.")
+      }
+
+      if (!this.telefono) {
+        this.validaMensaje.push("Ingrese el teléfono.")
+      }
 
       if (this.validaMensaje.length) {
         this.valida = 1;

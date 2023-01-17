@@ -10,7 +10,7 @@
         <v-spacer></v-spacer>
         <v-dialog v-model="dialog" max-width="500px">
           <template v-slot:activator="{ on, attrs }">
-            <v-btn color="primary" dark class="mb-2" v-bind="attrs" v-on="on">
+            <v-btn color="info" dark class="mb-2" v-bind="attrs" v-on="on">
               Nueva Categoria
             </v-btn>
           </template>
@@ -18,12 +18,11 @@
             <v-card-title>
               <span class="text-h5">{{ formTitle }}</span>
             </v-card-title>
-
             <v-card-text>
-              <v-container>
+              <v-container >
                 <v-row>
-                  <v-col cols="12" sm="12" md="12">
-                    <v-text-field v-model="nombre" label="Nombre"></v-text-field>
+                  <v-col  cols="12" sm="12" md="12">
+                    <v-text-field  v-model="nombre" label="Nombre"></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="12" md="12">
                     <v-text-field v-model="descripcion" label="Descripción"></v-text-field>
@@ -36,10 +35,10 @@
             </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="close">
+              <v-btn color="info" text @click="close">
                 Cancelar
               </v-btn>
-              <v-btn color="blue darken-1" text @click="guardar">
+              <v-btn color="info" text @click="guardar">
                 Guardar
               </v-btn>
             </v-card-actions>
@@ -69,7 +68,7 @@
         </template>
         <template v-slot:item.condicion="{ item }">
           <template v-if="item.condicion">
-            <span class="blue--text">Activo</span>
+            <span class="blue-grey--text">Activo</span>
           </template>
           <template v-else>
             <span class="red--text">Inactivo</span>
@@ -159,31 +158,7 @@ export default {
         console.log(error);
       });
     },
-    listar1() {
-      let me = this;
-      axios.get('api/Categorias/Listar').then(response => {
-
-        for (var x = 0; x < response.data.length; x++) {
-
-          var estado = ''
-          if (response.data[x].condicion == true) {
-            estado = 'Activo'
-          } else {
-            estado = 'Inactivo'
-          }
-          //console.log(estado)
-          response.data[x].condicion = estado
-          // for (response.data.length() )
-          // console.log(response.data[x].condicion); //response
-          me.categorias = response.data;
-
-        }
-
-      }).catch(error =>  {
-        console.log(error)
-      });
-    },
-
+    
     editItem(item) {
       this.id = item.idcategoria;
       console.log(this.id);
