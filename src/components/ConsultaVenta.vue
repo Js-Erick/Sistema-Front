@@ -108,7 +108,7 @@
                   </div>
                 </footer>
               </div>
-              <v-btn @click="ocultarComprobante()" color="blue darken-1">Cancelar</v-btn>
+              <v-btn @click="ocultarComprobante()" color="blue darken-1">Cerrar</v-btn>
             </v-card-text>
           </v-card>
         </v-dialog>
@@ -244,6 +244,7 @@ export default {
       { text: 'Total', value: 'total', sortable: false },
       { text: 'Fecha', value: 'fechaHora', sortable: false },
       { text: 'Estado', value: 'estado', sortable: false },
+      { text: 'Opciones', value: 'actions', sortable: false },
     ],
 
     id: 0,
@@ -272,7 +273,8 @@ export default {
       { text: 'Cantidad', value: 'cantidad', sortable: false },
       { text: 'Precio', value: 'precio', sortable: false },
       { text: 'Descuento', value: 'descuento', sortable: false },
-      { text: 'Subtotal', value: 'subTotal', sortable: false }
+      { text: 'Subtotal', value: 'subTotal', sortable: false },
+      
     ],
     totalParcial: 0,
     totalImpuesto: 0,
