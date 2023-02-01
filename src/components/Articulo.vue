@@ -10,6 +10,7 @@
         <v-text-field class="text-xs-center" v-model="search" append-icon="search" label="Busqueda" single-line
           hide-details></v-text-field>
         <v-spacer></v-spacer>
+        <!-- DIALOG CREAR / EDITAR -->
         <v-dialog v-model="dialog" max-width="500px">
           <template v-slot:activator="{ on, attrs }">
             <v-btn color="info" dark class="mb-2" v-bind="attrs" v-on="on">
@@ -58,6 +59,7 @@
             </v-card-actions>
           </v-card>
         </v-dialog>
+        <!-- DIALOG ACTIVAR / DESACTIVAR -->
         <v-dialog v-model="adModal" max-width="500px">
           <v-card>
             <v-card-title class="text-h5" v-if="adAccion == 1">¿Activar Item?</v-card-title>
@@ -77,6 +79,7 @@
           </v-card>
         </v-dialog>
       </v-toolbar>
+        <!-- DATA TABLE -->
       <v-data-table :headers="headers" :items="articulos" :search="search" class="elevation-1">
         <template v-slot:top>
         </template>
@@ -112,6 +115,7 @@
           </v-btn>
         </template>
       </v-data-table>
+        <!-- DIALOG ELIMINAR REGISTRO -->
       <v-dialog  v-model="dialogDelete" max-width="400px" >
         <v-card>
           <v-card-title>
@@ -190,9 +194,10 @@ export default {
     },
   },
 
-  created() {
+  created (){
     this.listar();
     this.select();
+
   },
 
   methods: {
@@ -224,7 +229,9 @@ export default {
 
     listar() {
       let me = this;
-      axios.get('api/Articulos/Listar').then(response => {
+      let header = { "Authorization": "Bearer " + this.$store.state.token };
+      let configuration = { headers: header };
+      axios.get('api/Articulos/Listar', configuration).then(response => {
         //console.log(response);
         me.articulos = response.data;
       }).catch(error => {
@@ -233,8 +240,10 @@ export default {
     },
     select() {
       let me = this;
+      let header = { "Authorization": "Bearer " + this.$store.state.token };
+      let configuration = { headers: header };
       let categoriasArray = []
-      axios.get('api/Categorias/Select').then(response => {
+      axios.get('api/Categorias/Select', configuration).then(response => {
         //console.log(response);
         categoriasArray = response.data,
           categoriasArray.map(x => {
@@ -244,8 +253,6 @@ export default {
         console.log(error);
       });
     },
-
-
 
     editItem(item) {
       console.log(item.idarticulo); 
@@ -288,6 +295,8 @@ export default {
       if (this.editedIndex > -1) {
         //Editar
         let me = this;
+        let header = { "Authorization": "Bearer " + this.$store.state.token };
+        let configuration = { headers: header };
         console.log(this.id)
         axios.put('api/Articulos/Actualizar', {
           'idarticulo': me.id,
@@ -298,7 +307,7 @@ export default {
           'descripcion': me.descripcion,
           'precioVenta': me.precioVenta
 
-        }).then(res => {
+        }, configuration).then(res => {
           console.log(res)
           me.close();
           me.listar();
@@ -311,6 +320,8 @@ export default {
         //console.log(this.nombre)
         //console.log(this.descripcion)
         let me = this;
+        let header = { "Authorization": "Bearer " + this.$store.state.token };
+        let configuration = { headers: header };
         axios.post('api/Articulos/Crear', {
           'idcategoria': me.idcategoria,
           'codigo': me.codigo,
@@ -320,7 +331,7 @@ export default {
           'precioVenta': me.precioVenta,
           'condicion': me.condicion,
 
-        }).then(res => {
+        }, configuration).then(res => {
           console.log(res)
           me.close();
           me.listar();
@@ -354,7 +365,9 @@ export default {
 
     eliminar(){
       let me = this;
-      axios.delete('api/Articulos/Eliminar/' + this.id, {}).then(response =>{
+      let header = { "Authorization": "Bearer " + this.$store.state.token };
+      let configuration = { headers: header };
+      axios.delete('api/Articulos/Eliminar/' + this.id, {}, configuration).then(response =>{
       console.log(response)
       me.adId = "";
       me.dialogDelete = 0;
@@ -366,7 +379,9 @@ export default {
 
     activar() {
       let me = this;
-      axios.put('api/Articulos/Activar/' + this.adId, {}).then(response => {
+      let header = { "Authorization": "Bearer " + this.$store.state.token };
+      let configuration = { headers: header };
+      axios.put('api/Articulos/Activar/' + this.adId, {}, configuration).then(response => {
         me.adModal = 0;
         me.adAccion = 0;
         me.adNombre = "";
@@ -378,7 +393,9 @@ export default {
     },
     desactivar() {
       let me = this;
-      axios.put('api/Articulos/Desactivar/' + this.adId, {}).then(response => {
+      let header = { "Authorization": "Bearer " + this.$store.state.token };
+      let configuration = { headers: header };
+      axios.put('api/Articulos/Desactivar/' + this.adId, {}, configuration).then(response => {
         console.log(me.adId)
         me.adModal = 0;
         me.adAccion = 0;
@@ -413,6 +430,9 @@ export default {
       this.id = item.idarticulo;
       this.dialogDelete=1;
     },
+  },
+
+}  
 
   /*  crearPDF() {
       var columns = [
@@ -441,8 +461,7 @@ export default {
       doc.save('Articulos.pdf');
     },*/
 
-  },
-}
 </script>
+
 
 

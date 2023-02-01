@@ -123,8 +123,8 @@ export default {
     getProductosMasVendidos(){
       let me=this;
       let header={"Authorization" : "Bearer " + this.$store.state.token};
-      let configuracion= {headers : header};
-      axios.get('api/Ventas/VentasMes12').then(response=>{
+      let configuration= {headers : header};
+      axios.get('api/Ventas/VentasMes12', configuration).then(response=>{
           //console.log(response);
           me.mesesValores=response.data;
           me.loadProductosMasVendidos();

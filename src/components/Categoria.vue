@@ -214,14 +214,16 @@ export default {
       if (this.editedIndex > -1) {
         //Editar
         let me = this;
-        console.log(this.id)
+        let header = { "Authorization": "Bearer " + this.$store.state.token };
+        let configuration = { headers: header };
+        //console.log(this.id)
         axios.put('api/Categorias/Actualizar', {
           'idcategoria': me.id,
           'nombre': me.nombre,
           'descripcion': me.descripcion,
           'condicion': me.condicion,
 
-        }).then(res =>  {
+        }, configuration).then(res =>  {
           console.log(res)
           me.close();
           me.listar();
@@ -234,13 +236,15 @@ export default {
         //console.log(this.nombre)
         //console.log(this.descripcion)
         let me = this;
+        let header = { "Authorization": "Bearer " + this.$store.state.token };
+        let configuration = { headers: header };
         axios.post('api/Categorias/Crear', {
           'nombre': me.nombre,
           'descripcion': me.descripcion,
           'condicion': me.condicion,
 
-        }).then(res =>  {
-          console.log(res)
+        }, configuration).then(res =>  {
+          //console.log(res)
           me.close();
           me.listar();
           me.limpiar();
@@ -263,7 +267,24 @@ export default {
     },
     activar() {
       let me = this;
-      axios.put('api/Categorias/Activar/' + this.id, {}).then(response => {
+      let header = { "Authorization": "Bearer " + this.$store.state.token };
+      let configuration = { headers: header };
+      axios.put('api/Categorias/Activar/' + this.adId, {}, configuration).then(response => {
+        me.adModal = 0;
+        me.adAccion = 0;
+        me.adNombre = "";
+        me.adId = "";
+        me.listar();
+      }).catch(error =>  {
+        console.log(error);
+      });
+    },
+
+    desactivar() {
+      let me = this;
+      let header = { "Authorization": "Bearer " + this.$store.state.token };
+      let configuration = { headers: header };
+      axios.put('api/Categorias/Desactivar/' + this.adId, {}, configuration).then(response => { 
         me.adModal = 0;
         me.adAccion = 0;
         me.adNombre = "";
@@ -276,7 +297,9 @@ export default {
 
     eliminar(){
       let me = this;
-      axios.delete('api/Categorias/Eliminar/' + this.id, {}).then(response =>{
+      let header = { "Authorization": "Bearer " + this.$store.state.token };
+      let configuration = { headers: header };
+      axios.delete('api/Categorias/Eliminar/' + this.id, {}, configuration).then(response =>{
       console.log(response)
       me.adId = "";
       me.dialogDelete = 0;
@@ -286,18 +309,7 @@ export default {
       });
     },
     
-    desactivar() {
-      let me = this;
-      axios.put('api/Categorias/Desactivar/' + this.adId, {}).then(response => { 
-        me.adModal = 0;
-        me.adAccion = 0;
-        me.adNombre = "";
-        me.adId = "";
-        me.listar();
-      }).catch(error =>  {
-        console.log(error);
-      });
-    },
+    
     activarDesactivarMostrar(accion, item) {
       this.adModal = 1;
       this.adNombre = item.nombre;

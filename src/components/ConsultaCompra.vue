@@ -5,14 +5,23 @@
         <v-toolbar-title>Consulta Compras</v-toolbar-title>
         <v-divider class="mx-4" inset vertical></v-divider>
         <v-spacer></v-spacer>
-        Desde:&nbsp;
+        Desde:
+        &nbsp;
+        &nbsp;
         <v-text-field type="date" v-if="verNuevo == 0" class="text-xs-center" v-model="fecha_Inicio"></v-text-field>
+        &nbsp;
+        &nbsp;
+        &nbsp;
         Hasta:&nbsp;
         <v-text-field type="date" v-if="verNuevo == 0" class="text-xs-center" v-model="fecha_Fin"></v-text-field>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <v-btn v-if="verNuevo == 0" @click="listar()" color="primary" dark class="mb-2">
           Buscar
         </v-btn>
       </v-toolbar>
+
+      <!-- DATA TABLE-->
       <v-data-table :headers="headers" :items="ingresos" :search="search" class="elevation-1" v-if="verNuevo == 0">
         <template v-slot:top>
         </template>
@@ -174,7 +183,9 @@ export default {
     
     listarDetalles(id) {
       let me = this;
-      axios.get('api/Ingresos/ListarDetalles/' + id).then(response =>{
+      let header = { "Authorization": "Bearer " + this.$store.state.token };
+      let configuration = { headers: header };
+      axios.get('api/Ingresos/ListarDetalles/' + id, configuration).then(response =>{
         //console.log(response);
         me.detalles = response.data;
       }).catch(error => {
@@ -217,12 +228,14 @@ export default {
 
     listar() {
       let me = this;
+      let header = { "Authorization": "Bearer " + this.$store.state.token };
+      let configuration = { headers: header };
       let url = '';
       if (!me.fecha_Inicio || !me.fecha_Fin) { url = 'api/Ingresos/Listar'; }
       else {
         url = 'api/Ingresos/ConsultaFechas/' + me.fecha_Inicio+'/'+me.fecha_Fin;
       }
-      axios.get(url).then(response => {
+      axios.get(url, configuration).then(response => {
         //console.log(response);
         me.ingresos = response.data;
       }).catch(error => {

@@ -15,7 +15,6 @@ import ConsultaCompra from '../components/ConsultaCompra.vue'
 import store from '../store/index'
 
 
-
 Vue.use(VueRouter)
 
 const routes = [

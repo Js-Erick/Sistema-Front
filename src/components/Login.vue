@@ -1,6 +1,8 @@
 <template>
     <v-layout align-center justify-center>
         <v-flex xs12 sm8 md6 lg5 xl4>
+
+            <!--FORMULARIO-->
             <v-card>
                 <v-toolbar dark color="info">
                     <v-toolbar-title>

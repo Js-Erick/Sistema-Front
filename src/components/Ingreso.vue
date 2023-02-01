@@ -11,6 +11,9 @@
         <v-btn v-if="verNuevo == 0" @click="mostrarNuevo" color="info" dark class="mb-2">
           Nuevo Ingreso
         </v-btn>
+
+        <!-- NUEVO INGRESO POR NOMBRE-->
+
         <v-dialog v-model="verArticulos" max-width="1000px">
           <v-card>
             <v-card-title>
@@ -48,6 +51,9 @@
             </v-card-actions>
           </v-card>
         </v-dialog>
+
+        <!-- ANULAR INGRESO-->
+
         <v-dialog v-model="adModal" max-width="500px">
           <v-card>
             <v-card-title class="text-h5" v-if="adAccion == 1">¿Activar Item?</v-card-title>
@@ -67,6 +73,8 @@
           </v-card>
         </v-dialog>
       </v-toolbar>
+
+      <!-- DATA TABLE -->
 
       <v-data-table :headers="headers" :items="ingresos" :search="search" class="elevation-1" v-if="verNuevo == 0">
         <template v-slot:top>
@@ -102,6 +110,9 @@
         </template>
       </v-data-table>
       <v-spacer></v-spacer>
+
+      <!--NUEVO INGRESO POR CODIGO-->
+
       <v-container grid-list-sm class="pa-4 white" v-if="verNuevo">
         <v-layout row wrap>
           <v-flex xs12 sm4 md4 xl4>
@@ -187,6 +198,9 @@
           </v-flex>
         </v-layout>
       </v-container>
+
+      <!--VER DETALLES-->
+
       <v-dialog v-model="verDeta" max-width="600px">
         <v-card>
           <v-card-title class="text-h6">Detalles</v-card-title>
@@ -198,6 +212,9 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
+
+      <!-- ELIMINAR REGISTRO-->
+
       <v-dialog v-model="dialogDelete" max-width="400px">
         <v-card>
           <v-card-title>
@@ -214,6 +231,7 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
+
     </v-flex>
   </v-layout>
 </template>
@@ -362,8 +380,10 @@ export default {
 
     buscarCodigo() {
       let me = this;
+      let header={"Authorization" : "Bearer " + this.$store.state.token};
+      let configuration= {headers : header};
       me.errorArticulo = null;
-      axios.get('api/Articulos/BuscarCodigoIngreso/' + this.codigo,).then(response => {
+      axios.get('api/Articulos/BuscarCodigoIngreso/' + this.codigo, configuration).then(response => {
         console.log(response);
         me.agregarDetalle(response.data);
       }).catch(error => {
@@ -373,7 +393,9 @@ export default {
     },
     listarArticulo() {
       let me = this;
-      axios.get('api/Articulos/ListarIngreso/' + me.texto).then(response => {
+      let header={"Authorization" : "Bearer " + this.$store.state.token};
+      let configuration= {headers : header};
+      axios.get('api/Articulos/ListarIngreso/' + me.texto, configuration).then(response => {
         console.log(response);
         me.articulos = response.data;
       }).catch(error => {
@@ -382,7 +404,10 @@ export default {
     },
     listarDetalles(id) {
       let me = this;
-      axios.get('api/Ingresos/ListarDetalles/' + id).then(response => {
+      let header={"Authorization" : "Bearer " + this.$store.state.token};
+      let configuration= {headers : header};
+      console.log(this.id)
+      axios.get('api/Ingresos/ListarDetalles/' + id, configuration).then(response => {
         console.log(response);
         me.detalles = response.data;
       }).catch(error => {
@@ -456,8 +481,9 @@ export default {
 
     listar() {
       let me = this;
-
-      axios.get('api/Ingresos/Listar').then(response => {
+      let header={"Authorization" : "Bearer " + this.$store.state.token};
+      let configuration= {headers : header};
+      axios.get('api/Ingresos/Listar', configuration).then(response => {
         //console.log(response);
         me.ingresos = response.data;
       }).catch(error => {
@@ -466,8 +492,10 @@ export default {
     },
     select() {
       let me = this;
+      let header={"Authorization" : "Bearer " + this.$store.state.token};
+      let configuration= {headers : header};
       let proveedoresArray = []
-      axios.get('api/Personas/SelectProveedores').then(response => {
+      axios.get('api/Personas/SelectProveedores', configuration).then(response => {
         //console.log(response);
         proveedoresArray = response.data,
           proveedoresArray.map(x => {
@@ -504,6 +532,8 @@ export default {
         return;
       }
       let me = this;
+      let header={"Authorization" : "Bearer " + this.$store.state.token};
+      let configuration= {headers : header};
       axios.post('api/Ingresos/Crear', {
         'idproveedor': me.idproveedor,
         'idusuario': me.$store.state.usuario.idusuario,
@@ -513,7 +543,7 @@ export default {
         'impuesto': me.impuesto,
         'total': me.total,
         'detalles': me.detalles
-      }).then(response => {
+      }, configuration).then(response => {
         console.log(response)
         me.ocultarNuevo();
         me.listar();
@@ -549,7 +579,10 @@ export default {
 
     eliminar(){
       let me = this;
-      axios.delete('api/Ingresos/Eliminar/' + this.id, {}).then(response =>{
+      let header={"Authorization" : "Bearer " + this.$store.state.token};
+      let configuration= {headers : header};
+      //console.log(this.id)
+      axios.delete('api/Ingresos/Eliminar/' + this.id, {}, configuration).then(response =>{
       console.log(response)
       me.adId = "";
       me.dialogDelete = 0;
@@ -561,7 +594,9 @@ export default {
 
     desactivar() {
       let me = this;
-      axios.put('api/Ingresos/Anular/' + this.adId, {},).then(() => {
+      let header={"Authorization" : "Bearer " + this.$store.state.token};
+      let configuration= {headers : header};
+      axios.put('api/Ingresos/Anular/' + this.adId, {}, configuration).then(() => {
         me.adModal = 0;
         me.adAccion = 0;
         me.adNombre = "";
@@ -616,3 +651,4 @@ export default {
     },*/
 }
 </script>
+

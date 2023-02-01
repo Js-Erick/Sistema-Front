@@ -8,6 +8,7 @@
         <v-text-field class="text-xs-center" v-model="search" append-icon="search" label="Busqueda" single-line
           hide-details></v-text-field>
         <v-spacer></v-spacer>
+        <!-- DIALOG NUEVO CLIENTE-->
         <v-dialog v-model="dialog" max-width="500px">
           <template v-slot:activator="{ on, attrs }">
             <v-btn color="primary" dark class="mb-2" v-bind="attrs" v-on="on">
@@ -60,6 +61,7 @@
           </v-card>
         </v-dialog>
       </v-toolbar>
+      <!-- DATA TABLE-->
       <v-data-table :headers="headers" :items="clientes" :search="search" class="elevation-1">
         <template v-slot:top>
         </template>
@@ -77,6 +79,7 @@
           </v-btn>
         </template>
       </v-data-table>
+      <!-- DIALOG ELIMINAR-->
       <v-dialog  v-model="dialogDelete" max-width="400px" >
         <v-card>
           <v-card-title>
@@ -160,7 +163,9 @@ export default {
   methods: {
     listar() {
       let me = this;
-      axios.get('api/Personas/ListarClientes').then(response => {
+      let header = { "Authorization": "Bearer " + this.$store.state.token };
+      let configuration = { headers: header };
+      axios.get('api/Personas/ListarClientes', configuration).then(response => {
         console.log(response);
         me.clientes = response.data;
       }).catch(error => {
@@ -209,8 +214,9 @@ export default {
       if (this.editedIndex > -1) {
         //Editar
         let me = this;
-
-        console.log(this.id)
+        let header = { "Authorization": "Bearer " + this.$store.state.token };
+        let configuration = { headers: header };
+        //console.log(this.id)
         axios.put('api/Personas/Actualizar', {
           'idpersona': me.id,
           'tipoPersona': 'Cliente',
@@ -222,7 +228,7 @@ export default {
           'email': me.email,
 
 
-        }).then(res => {
+        }, configuration).then(res => {
           console.log(res)
           me.close();
           me.listar();
@@ -236,6 +242,8 @@ export default {
         //console.log(this.nombre)
 
         let me = this;
+        let header = { "Authorization": "Bearer " + this.$store.state.token };
+        let configuration = { headers: header };
         axios.post('api/Personas/Crear', {
           'tipoPersona': 'Cliente',
           'nombre': me.nombre,
@@ -245,7 +253,7 @@ export default {
           'telefono': me.telefono,
           'email': me.email,
 
-        }).then(res => {
+        }, configuration).then(res => {
           console.log(res)
           me.close();
           me.listar();
@@ -258,7 +266,9 @@ export default {
 
     eliminar(){
       let me = this;
-      axios.delete('api/Personas/Eliminar/' + this.id, {}).then(response =>{
+      let header = { "Authorization": "Bearer " + this.$store.state.token };
+      let configuration = { headers: header };
+      axios.delete('api/Personas/Eliminar/' + this.id, {}, configuration).then(response =>{
       console.log(response)
       me.adId = "";
       me.dialogDelete = 0;
