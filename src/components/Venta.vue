@@ -168,7 +168,7 @@
                 <br>
                 <footer>
                   <div id="gracias">
-                    <p><b>Gracias por su compra!</b></p>
+                    <p><b>Gracias por su comprar</b></p>
                   </div>
                 </footer>
               </div>
