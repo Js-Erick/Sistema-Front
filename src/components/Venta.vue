@@ -327,7 +327,7 @@
         </v-card>
       </v-dialog>
 
-      <!--  DIALOG ELIMINAR VENTA   -->
+      <!--  DIALOG ELIMINAR VENTAS   -->
 
       <v-dialog v-model="dialogDelete" max-width="400px">
         <v-card>
