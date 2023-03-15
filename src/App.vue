@@ -1,28 +1,22 @@
 <template>
   <v-app>
-    
-    <v-navigation-drawer
-      fixed
-      v-model="drawer"
-      :clipped="$vuetify.breakpoint.mdAndUp"
-      app
-      v-if="logueado"
-    >
+
+    <v-navigation-drawer fixed v-model="drawer" :clipped="$vuetify.breakpoint.mdAndUp" app v-if="logueado">
       <v-spacer></v-spacer>
       <v-list dense>
         <template v-if="esAdministrador || esBodeguero || esVendedor || esSuperUsuario">
-          <v-list-item :to="{ name: 'home'}">
+          <v-list-item :to="{ name: 'home' }">
             <v-list-item-action>
               <v-icon>home</v-icon>
             </v-list-item-action>
             <v-list-item-title>
               Inicio
             </v-list-item-title>
-          </v-list-item>          
+          </v-list-item>
         </template>
         <v-spacer></v-spacer>
         <template v-if="esAdministrador || esBodeguero || esSuperUsuario">
-            <v-list-group>
+          <v-list-group>
             <v-list-item slot="activator">
               <v-list-item-content>
                 <v-list-item-title>
@@ -30,7 +24,7 @@
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item :to="{ name: 'categorias'}">
+            <v-list-item :to="{ name: 'categorias' }">
               <v-list-item-action>
                 <v-icon color="info">table_chart</v-icon>
               </v-list-item-action>
@@ -40,7 +34,7 @@
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item :to="{ name: 'articulos'}">
+            <v-list-item :to="{ name: 'articulos' }">
               <v-list-item-action>
                 <v-icon color="info">table_chart</v-icon>
               </v-list-item-action>
@@ -53,7 +47,7 @@
           </v-list-group>
         </template>
         <template v-if="esAdministrador || esBodeguero || esSuperUsuario">
-            <v-list-group>
+          <v-list-group>
             <v-list-item slot="activator">
               <v-list-item-content>
                 <v-list-item-title>
@@ -61,7 +55,7 @@
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item :to="{ name: 'ingresos'}">
+            <v-list-item :to="{ name: 'ingresos' }">
               <v-list-item-action>
                 <v-icon color="info">table_chart</v-icon>
               </v-list-item-action>
@@ -71,7 +65,7 @@
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item :to="{ name: 'proveedores'}">
+            <v-list-item :to="{ name: 'proveedores' }">
               <v-list-item-action>
                 <v-icon color="info">table_chart</v-icon>
               </v-list-item-action>
@@ -84,7 +78,7 @@
           </v-list-group>
         </template>
         <template v-if="esAdministrador || esVendedor || esSuperUsuario">
-            <v-list-group>
+          <v-list-group>
             <v-list-item slot="activator">
               <v-list-item-content>
                 <v-list-item-title>
@@ -92,7 +86,7 @@
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item :to="{ name: 'ventas'}">
+            <v-list-item :to="{ name: 'ventas' }">
               <v-list-item-action>
                 <v-icon color="info">table_chart</v-icon>
               </v-list-item-action>
@@ -102,7 +96,7 @@
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item :to="{ name: 'clientes'}">
+            <v-list-item :to="{ name: 'clientes' }">
               <v-list-item-action>
                 <v-icon color="info">table_chart</v-icon>
               </v-list-item-action>
@@ -115,7 +109,7 @@
           </v-list-group>
         </template>
         <template v-if="esAdministrador || esSuperUsuario">
-            <v-list-group>
+          <v-list-group>
             <v-list-item slot="activator">
               <v-list-item-content>
                 <v-list-item-title>
@@ -123,7 +117,7 @@
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item :to="{ name: 'roles'}">
+            <v-list-item :to="{ name: 'roles' }">
               <v-list-item-action>
                 <v-icon color="info">table_chart</v-icon>
               </v-list-item-action>
@@ -133,7 +127,7 @@
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item :to="{ name: 'usuarios'}">
+            <v-list-item :to="{ name: 'usuarios' }">
               <v-list-item-action>
                 <v-icon color="info">table_chart</v-icon>
               </v-list-item-action>
@@ -146,7 +140,7 @@
           </v-list-group>
         </template>
         <template v-if="esAdministrador || esSuperUsuario">
-            <v-list-group>
+          <v-list-group>
             <v-list-item slot="activator">
               <v-list-item-content>
                 <v-list-item-title>
@@ -154,7 +148,7 @@
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item :to="{ name: 'consultacompras'}">
+            <v-list-item :to="{ name: 'consultacompras' }">
               <v-list-item-action>
                 <v-icon color="info">table_chart</v-icon>
               </v-list-item-action>
@@ -164,7 +158,7 @@
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item :to="{ name: 'consultaventas'}">
+            <v-list-item :to="{ name: 'consultaventas' }">
               <v-list-item-action>
                 <v-icon color="info">table_chart</v-icon>
               </v-list-item-action>
@@ -178,38 +172,34 @@
         </template>
       </v-list>
     </v-navigation-drawer>
-    
-    <v-app-bar app color="info"
-    dark
-    :clipped-left="$vuetify.breakpoint.mdAndUp"
-    fixed
-    >
-      <v-toolbar-title  style="width: 300px" class="ml-0 pl-3">
-        <v-app-bar-nav-icon  @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+
+    <v-app-bar app color="info" dark :clipped-left="$vuetify.breakpoint.mdAndUp" fixed>
+      <v-toolbar-title style="width: 300px" class="ml-0 pl-3">
+        <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
         <span class="white--text ">Sistema</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn dark class="mb-1" color="brown darken-4" @click="salir" v-if="logueado">
         Salir
       </v-btn>
-      <v-btn dark class="mb-1" color="brown darken-4" :to="{path:'/login'}" v-else>
-        Login 
+      <v-btn dark class="mb-1" color="brown darken-4" :to="{ path: '/login' }" v-else>
+        Login
       </v-btn>
     </v-app-bar>
     <v-main>
       <v-container fluid fill-height>
         <v-slide-y-transition mode="out-in">
-          <router-view/>
+          <router-view />
         </v-slide-y-transition>
       </v-container>
     </v-main>
 
-    <v-footer dark height="auto">
+    <v-footer dark height="auto" class="custom-footer" color="info">
       <v-layout justify-center>
         <v-flex text-xs-center>
-          <v-card flat item color="primary" class="white--text">
-            
-          </v-card>
+              <div class="text-center ">
+                <p class="parrafo">&copy; 2023 Sistema Erick. Todos los derechos reservados.</p>
+              </div>
         </v-flex>
       </v-layout>
     </v-footer>
@@ -220,9 +210,9 @@
 
 export default {
   name: 'App',
-  data () {
+  data() {
     return {
-      drawer:true,
+      drawer: true,
       clipped: false,
       fixed: false,
       items: [{
@@ -236,30 +226,43 @@ export default {
     }
   },
   computed: {
-    logueado(){
+    logueado() {
       return this.$store.state.usuario;
     },
-    esAdministrador(){
-      return this.$store.state.usuario && this.$store.state.usuario.rol =='Administrador';
+    esAdministrador() {
+      return this.$store.state.usuario && this.$store.state.usuario.rol == 'Administrador';
     },
-    esBodeguero(){
-      return this.$store.state.usuario && this.$store.state.usuario.rol =='Bodeguero';
+    esBodeguero() {
+      return this.$store.state.usuario && this.$store.state.usuario.rol == 'Bodeguero';
     },
-    esVendedor(){
-      return this.$store.state.usuario && this.$store.state.usuario.rol =='Vendedor';
+    esVendedor() {
+      return this.$store.state.usuario && this.$store.state.usuario.rol == 'Vendedor';
     },
-    esSuperUsuario(){
-      return this.$store.state.usuario && this.$store.state.usuario.rol =='SuperUsuario'
+    esSuperUsuario() {
+      return this.$store.state.usuario && this.$store.state.usuario.rol == 'SuperUsuario'
     }
   },
-  created(){
+  created() {
     this.$store.dispatch("autoLogin");
   },
-  methods:{
-    salir(){
+  methods: {
+    salir() {
       this.$store.dispatch("salir");
     }
   }
 }
 </script>
+
+<style>
+.custom-footer {
+  z-index: 1000;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+
+.parrafo{
+  margin-bottom: -6px !important;
+}
+</style>
 

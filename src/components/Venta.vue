@@ -74,7 +74,7 @@
 
         <!--  DIALOG COMPROBANTE DE VENTA   -->
 
-        <v-dialog v-model="comprobanteModal" max width="1000px">
+        <v-dialog v-model="comprobanteModal" max-width="1000px">
           <v-card>
             <v-card-text>
               <v-btn @click="crearPDF"><v-icon>print</v-icon></v-btn>
@@ -94,7 +94,7 @@
                   <div id="fact">
                     <p>{{ tipoComprobante }}<br>
                       {{ serieComprobante }}-{{ numComprobante }}<br>
-                      {{ fechaHora }}</p>
+                      {{ formatFechaHora(fechaHora) }} hrs</p>
                   </div>
                 </header>
                 <br>
@@ -122,7 +122,7 @@
                       <thead>
                         <tr id="fa">
                           <th>CANT</th>
-                          <th>DESCRIPCION</th>
+                          <th>ARTÍCULO</th>
                           <th>PRECIO UNIT</th>
                           <th>DESC.</th>
                           <th>PRECIO TOTAL</th>
@@ -131,7 +131,7 @@
                       <tbody>
                         <tr v-for="d in detalles" :key="d.iddetalleVenta">
                           <td style="text-align:center;">{{ d.cantidad }}</td>
-                          <td style="text-align:center;">{{ d.nombre }}</td>
+                          <td style="text-align:center;">{{ nombre }}</td>
                           <td style="text-align:center;">{{ d.precio }}</td>
                           <td style="text-align:center;">{{ d.descuento }}</td>
                           <td style="text-align:center;">{{ d.cantidad * d.precio - d.descuento }}</td>
@@ -143,14 +143,14 @@
                           <th></th>
                           <th></th>
                           <th style="text-align:right;">SUBTOTAL</th>
-                          <th style="text-align:right;">$ {{ totalParcial = (total - totalImpuesto) }}</th>
+                          <th style="text-align:right;">$ {{ calcularTotalParcial() }}</th>
                         </tr>
                         <tr>
                           <th></th>
                           <th></th>
                           <th></th>
                           <th style="text-align:right;">IVA({{ impuesto }}%)</th>
-                          <th style="text-align:right;">$ {{ totalImpuesto = ((total * impuesto) / (100 + impuesto)) }}
+                          <th style="text-align:right;">$ {{ calcularTotalImpuesto() }}
                           </th>
                         </tr>
                         <tr>
@@ -158,7 +158,7 @@
                           <th></th>
                           <th></th>
                           <th style="text-align:right;">TOTAL</th>
-                          <th style="text-align:right;">$ {{ total=(calcularTotal) }}</th>
+                          <th style="text-align:right;">$ {{ total = (calcularTotal) }}</th>
                         </tr>
                       </tfoot>
                     </table>
@@ -168,7 +168,7 @@
                 <br>
                 <footer>
                   <div id="gracias">
-                    <p><b>Gracias por su comprar</b></p>
+                    <p><b>Gracias por su compra</b></p>
                   </div>
                 </footer>
               </div>
@@ -181,7 +181,8 @@
 
       <!--  DATATABLE VENTAS   -->
 
-      <v-data-table :headers="headers" :items="ventas" :search="search" class="elevation-1" v-if="verNuevo == 0">
+      <v-data-table :headers="headers" :items="ventas" :search="search" class="elevation-1" v-if="verNuevo == 0"
+        :items-per-page="9">
         <template v-slot:top>
         </template>
         <template v-slot:item.estado="{ item }">
@@ -290,10 +291,12 @@
               </template>
             </v-data-table>
             <v-flex class="text-xs-right">
-              <strong>Total Parcial: $</strong>{{ totalParcial = (total - totalImpuesto) }}
+              <strong>Total Parcial: $</strong>{{ calcularTotalParcial() }}
+
             </v-flex>
             <v-flex class="text-xs-right">
-              <strong>Total Impuesto: $</strong>{{ totalImpuesto = ((total * impuesto) / (100 + impuesto)) }}
+              <strong>Total Impuesto: $</strong>{{ calcularTotalImpuesto() }}
+
             </v-flex>
             <v-flex class="text-xs-right">
               <strong>Total Neto: $</strong>{{ total = (calcularTotal) }}
@@ -345,7 +348,6 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
-
     </v-flex>
   </v-layout>
 </template>
@@ -353,7 +355,11 @@
 import axios from 'axios';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import Comprobante from './Comprobante.vue';
 export default {
+  // components: {
+  //   Comprobante
+  // },
   data: () => ({
     ventas: [],
     dialog: false,
@@ -367,7 +373,7 @@ export default {
     search: '',
     verNuevo: 0,
     errorArticulo: null,
-    comprobanteModal: 0,
+    comprobanteModal: 0,// comprobante
 
     headers: [
       { text: 'Usuario', value: 'idusuarioNavigation.nombre' },
@@ -414,6 +420,7 @@ export default {
     totalParcial: 0,
     totalImpuesto: 0,
     total: 0,
+    totalNeto: 0,
     verArticulos: 0,
     verDet: 0,
     verDeta: 0,
@@ -478,6 +485,7 @@ export default {
       })
     },
 
+    // comprobante
     mostrarComprobante(item) {
       this.limpiar();
       this.tipoComprobante = item.tipoComprobante;
@@ -499,11 +507,24 @@ export default {
       this.limpiar();
     },
 
+    //-------------------------------------------------------
+
     calcularSubTotal: function () {
       var resultado = 0;
       this.detalles.forEach(e => { resultado += e.precio * e.cantidad - e.descuento; });
-      console.log(resultado);
+      //console.log(resultado);
       return resultado
+    },
+
+    calcularTotalImpuesto() {
+      return (this.total * this.impuesto / (100 + this.impuesto)).toFixed(2);
+
+    },
+
+    calcularTotalParcial() {
+      const subTotal = this.calcularSubTotal();
+      const totalImpuesto = Number(this.calcularTotalImpuesto());
+      return (subTotal - totalImpuesto).toFixed(2);
     },
 
     formatFecha(f) {
@@ -526,10 +547,15 @@ export default {
       }
     },
 
-
-    formatFecha2(f) {
-      var fecha = new Date(f).toISOString().substring(0, 10);
-      return fecha;
+    formatFechaHora(fechaHora) {
+      const date = new Date(fechaHora);
+      const dia = date.getDate().toString().padStart(2, '0');
+      const mes = (date.getMonth() + 1).toString().padStart(2, '0');
+      const anio = date.getFullYear().toString();
+      const hora = date.getHours().toString().padStart(2, '0');
+      const minuto = date.getMinutes().toString().padStart(2, '0');
+      const segundo = date.getSeconds().toString().padStart(2, '0');
+      return `${dia}/${mes}/${anio} ${hora}:${minuto}:${segundo}`;
     },
 
     mostrarNuevo() {
@@ -574,6 +600,8 @@ export default {
       axios.get('api/Ventas/ListarDetalles/' + id, configuration).then(response => {
         console.log(response.data);
         me.detalles = response.data;
+        me.nombre = response.data[0].idarticuloNavigation.nombre;
+        //console.log(me.nombre);
       }).catch(error => {
         console.log(error);
       });

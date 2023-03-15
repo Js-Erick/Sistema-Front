@@ -22,7 +22,7 @@
       </v-toolbar>
 
       <!-- DATA TABLE-->
-      <v-data-table :headers="headers" :items="ingresos" :search="search" class="elevation-1" v-if="verNuevo == 0">
+      <v-data-table :headers="headers" :items="ingresos" :search="search" class="elevation-1" v-if="verNuevo == 0" :items-per-page="9">
         <template v-slot:top>
         </template>
         

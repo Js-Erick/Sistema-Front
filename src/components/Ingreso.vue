@@ -76,7 +76,7 @@
 
       <!-- DATA TABLE -->
 
-      <v-data-table :headers="headers" :items="ingresos" :search="search" class="elevation-1" v-if="verNuevo == 0">
+      <v-data-table :headers="headers" :items="ingresos" :search="search" class="elevation-1" v-if="verNuevo == 0" :items-per-page="9">
         <template v-slot:top>
         </template>
         <template v-slot:item.estado="{ item }">
@@ -176,10 +176,10 @@
               </template>
             </v-data-table>
             <v-flex class="text-xs-right">
-              <strong>Total Parcial: $</strong>{{ totalParcial = (total - totalImpuesto) }}
+              <strong>Total Parcial: $</strong>{{ totalParcial = (total - totalImpuesto).toFixed(2) }}
             </v-flex>
             <v-flex class="text-xs-right">
-              <strong>Total Impuesto: $</strong>{{ totalImpuesto = ((total * impuesto) / (100 + impuesto)) }}
+              <strong>Total Impuesto: $</strong>{{ totalImpuesto = ((total * impuesto) / (100 + impuesto)).toFixed(2) }}
             </v-flex>
             <v-flex class="text-xs-right">
               <strong>Total Neto: $</strong>{{ total = (calcularTotal) }}
@@ -339,7 +339,7 @@ export default {
     calcularSubTotal: function () {
       var resultado = 0;
       this.detalles.forEach(e => { resultado += e.precio * e.cantidad; });
-      console.log(resultado);
+      //console.log(resultado);
       return resultado
     },
 
@@ -363,11 +363,17 @@ export default {
       }
     },
 
-
-    formatFecha2(f) {
-      var fecha = new Date(f).toISOString().substring(0, 10);
-      return fecha;
+    formatFechaHora(fechaHora) {
+      const date = new Date(fechaHora);
+      const dia = date.getDate().toString().padStart(2, '0');
+      const mes = (date.getMonth() + 1).toString().padStart(2, '0');
+      const anio = date.getFullYear().toString();
+      const hora = date.getHours().toString().padStart(2, '0');
+      const minuto = date.getMinutes().toString().padStart(2, '0');
+      const segundo = date.getSeconds().toString().padStart(2, '0');
+      return `${dia}/${mes}/${anio} ${hora}:${minuto}:${segundo}`;
     },
+
 
     mostrarNuevo() {
       this.verNuevo = 1;
@@ -408,7 +414,7 @@ export default {
       let configuration= {headers : header};
       console.log(this.id)
       axios.get('api/Ingresos/ListarDetalles/' + id, configuration).then(response => {
-        console.log(response);
+        console.log(response.data[0].idarticuloNavigation.nombre);
         me.detalles = response.data;
       }).catch(error => {
         console.log(error);
@@ -484,7 +490,7 @@ export default {
       let header={"Authorization" : "Bearer " + this.$store.state.token};
       let configuration= {headers : header};
       axios.get('api/Ingresos/Listar', configuration).then(response => {
-        //console.log(response);
+        console.log(response);
         me.ingresos = response.data;
       }).catch(error => {
         console.log(error);

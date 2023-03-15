@@ -92,7 +92,7 @@
 
       <!-- DATA TABLE -->
 
-      <v-data-table :headers="headers" :items="usuarios" :search="search" class="elevation-1">
+      <v-data-table :headers="headers" :items="usuarios" :search="search" class="elevation-1" :items-per-page="9">
         <template v-slot:top>
         </template>
         <template v-slot:item.condicion="{ item }">

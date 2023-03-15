@@ -121,7 +121,7 @@
         </v-dialog>
       </v-toolbar>
       <!-- DATA TABLE-->
-      <v-data-table :headers="headers" :items="ventas"  class="elevation-1" v-if="verNuevo == 0">
+      <v-data-table :headers="headers" :items="ventas"  class="elevation-1" v-if="verNuevo == 0" :items-per-page="9">
         <template v-slot:top>
         </template>
         <template v-slot:item.estado="{ item }">
