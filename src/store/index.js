@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import decode from 'jwt-decode'
 import router from '../router/index'
+import categoriasStore from "@/store/modules/Bodega/Categoria";
 
 Vue.use(Vuex)
 
@@ -42,5 +43,6 @@ export default new Vuex.Store({
     }
   },
   modules: {
+    categoriasStore
   }
 })

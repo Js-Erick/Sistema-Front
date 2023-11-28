@@ -19,10 +19,10 @@
               <span class="text-h5">{{ formTitle }}</span>
             </v-card-title>
             <v-card-text>
-              <v-container >
+              <v-container>
                 <v-row>
-                  <v-col  cols="12" sm="12" md="12">
-                    <v-text-field  v-model="nombre" label="Nombre"></v-text-field>
+                  <v-col cols="12" sm="12" md="12">
+                    <v-text-field v-model="nombre" label="Nombre"></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="12" md="12">
                     <v-text-field v-model="descripcion" label="Descripción"></v-text-field>
@@ -78,7 +78,7 @@
           <v-icon small color="green" class="mr-2" @click="editItem(item)">
             edit
           </v-icon>
-          <v-icon v-if="esAdministrador" small color="red" class="mr-2" @click="borrarRegistro(item)" >
+          <v-icon v-if="esAdministrador" small color="red" class="mr-2" @click="borrarRegistro(item)">
             delete
           </v-icon>
           <template v-if="item.condicion">
@@ -98,20 +98,20 @@
           </v-btn>
         </template>
       </v-data-table>
-      <v-dialog  v-model="dialogDelete" max-width="400px" >
+      <v-dialog v-model="dialogDelete" max-width="400px">
         <v-card>
           <v-card-title>
             Estas seguro de eliminar el registro??
           </v-card-title>
           <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="info" text @click="closeDelete">
-                Cancelar
-              </v-btn>
-              <v-btn color="info" text @click="eliminar">
-                Aceptar
-              </v-btn>
-            </v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="info" text @click="closeDelete">
+              Cancelar
+            </v-btn>
+            <v-btn color="info" text @click="eliminar">
+              Aceptar
+            </v-btn>
+          </v-card-actions>
         </v-card>
       </v-dialog>
     </v-flex>
@@ -119,6 +119,7 @@
 </template>
 <script>
 import axios from 'axios';
+import { mapGetters,mapState, mapActions } from "vuex";
 export default {
   data: () => ({
     categorias: [],
@@ -146,12 +147,14 @@ export default {
   }),
 
   computed: {
+    ...mapState("categoriasStore", ["lista_categorias"]),
+    ...mapGetters("categoriasStore",["lista_categorias"]),
     formTitle() {
       return this.editedIndex === -1 ? 'Nueva Categoria' : 'Editar Categoria'
     },
 
-    esAdministrador(){
-      return this.$store.state.usuario && this.$store.state.usuario.rol =='Administrador';
+    esAdministrador() {
+      return this.$store.state.usuario && this.$store.state.usuario.rol == 'Administrador';
     },
   },
 
@@ -169,19 +172,17 @@ export default {
   },
 
   methods: {
-    listar() {
-      let me = this;
-      let header = { "Authorization": "Bearer " + this.$store.state.token };
-      let configuration = { headers: header };
-      axios.get('api/Categorias/Listar', configuration).then( response =>{
-        //console.log(response);
+    ...mapActions("categoriasStore", ["listarCategorias"]),
 
-        me.categorias = response.data;
-      }).catch( error => {
-        console.log(error);
-      });
+    async listar() {
+      try {
+        await this.listarCategorias();
+        this.categorias = this.lista_categorias;
+      } catch (error) {
+        console.error(error);
+      }
     },
-    
+
     editItem(item) {
       console.log(item.idcategoria);
       this.id = item.idcategoria;
@@ -223,12 +224,12 @@ export default {
           'descripcion': me.descripcion,
           'condicion': me.condicion,
 
-        }, configuration).then(res =>  {
+        }, configuration).then(res => {
           console.log(res)
           me.close();
-          me.listar();
+          this.listar();
           me.limpiar();
-        }).catch( error => {
+        }).catch(error => {
           console.log(error);
         });
       } else {
@@ -243,12 +244,12 @@ export default {
           'descripcion': me.descripcion,
           'condicion': me.condicion,
 
-        }, configuration).then(res =>  {
+        }, configuration).then(res => {
           //console.log(res)
           me.close();
-          me.listar();
+          this.listar();
           me.limpiar();
-        }).catch(error =>  {
+        }).catch(error => {
           console.log(error);
         });
       }
@@ -274,8 +275,8 @@ export default {
         me.adAccion = 0;
         me.adNombre = "";
         me.adId = "";
-        me.listar();
-      }).catch(error =>  {
+        this.listar();
+      }).catch(error => {
         console.log(error);
       });
     },
@@ -284,32 +285,32 @@ export default {
       let me = this;
       let header = { "Authorization": "Bearer " + this.$store.state.token };
       let configuration = { headers: header };
-      axios.put('api/Categorias/Desactivar/' + this.adId, {}, configuration).then(response => { 
+      axios.put('api/Categorias/Desactivar/' + this.adId, {}, configuration).then(response => {
         me.adModal = 0;
         me.adAccion = 0;
         me.adNombre = "";
         me.adId = "";
-        me.listar();
-      }).catch(error =>  {
+        this.listar();
+      }).catch(error => {
         console.log(error);
       });
     },
 
-    eliminar(){
+    eliminar() {
       let me = this;
       let header = { "Authorization": "Bearer " + this.$store.state.token };
       let configuration = { headers: header };
-      axios.delete('api/Categorias/Eliminar/' + this.id, {}, configuration).then(response =>{
-      console.log(response)
-      me.adId = "";
-      me.dialogDelete = 0;
-      me.listar();
-      }).catch(error =>{
+      axios.delete('api/Categorias/Eliminar/' + this.id, {}, configuration).then(response => {
+        console.log(response)
+        me.adId = "";
+        me.dialogDelete = 0;
+        this.listar();
+      }).catch(error => {
         console.log(error);
       });
     },
-    
-    
+
+
     activarDesactivarMostrar(accion, item) {
       this.adModal = 1;
       this.adNombre = item.nombre;
@@ -330,21 +331,22 @@ export default {
       this.adModal = 0;
     },
 
-    borrarRegistro(item){
+    borrarRegistro(item) {
       this.id = item.idarticulo;
-      this.dialogDelete=1;
+      this.dialogDelete = 1;
     },
 
     closeDelete() {
       this.dialogDelete = 0
     },
 
-    borrarRegistro(item){
+    borrarRegistro(item) {
       console.log(item.idcategoria)
       this.id = item.idcategoria;
-      this.dialogDelete=1;
+      this.dialogDelete = 1;
     },
-
+    
   },
+
 }
 </script>
